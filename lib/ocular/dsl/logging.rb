@@ -4,8 +4,6 @@ class Ocular
     module DSL
         module Logging
 
-
-
             def debug(message = nil, &block)
                 @logger.add(Logger::Severity::DEBUG, message, @run_id, &block)
             end
@@ -114,7 +112,6 @@ class Ocular
                     end
                 end
             end
-
         end
     end
 end
