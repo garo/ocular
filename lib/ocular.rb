@@ -1,3 +1,2 @@
 
-require 'ocular/dsl/dsl.rb'
-require 'ocular/eventfactory.rb'
+require 'ocular/ocular.rb'

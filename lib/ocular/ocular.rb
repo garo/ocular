@@ -1,2 +1,2 @@
-require 'ocular/dsl/dsl'
+require 'ocular/dsl/eventbase'
 require 'ocular/eventfactory'

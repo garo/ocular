@@ -1,4 +1,4 @@
 puts "dsl-example loaded"
 onEvent EventFactoryTestClass do
-    puts "moi"
+    puts "puts call from dsl-example.rb"
 end
