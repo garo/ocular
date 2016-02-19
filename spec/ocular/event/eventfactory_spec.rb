@@ -18,7 +18,9 @@ RSpec.describe Ocular::Event::EventFactory do
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_file('spec/data/dsl-example.rb')
             eventbase = proxy.events[0]
-            eventbase.exec(eventbase)
+
+            context = Ocular::DSL::RunContext.new
+            eventbase.exec(context)
         end
     end
 
@@ -31,10 +33,12 @@ RSpec.describe Ocular::Event::EventFactory do
                 onEvent EventFactoryTestClass do
                     a = true
                     globalTestFunc("Hello")
-                end                             
+                end
             end
             eventbase = proxy.events[0]
-            eventbase.exec(eventbase)
+
+            context = Ocular::DSL::RunContext.new
+            eventbase.exec(context)
             expect(a).to eq(true)
             expect($globalTestFuncTestStr).to eq("Hello")
         end

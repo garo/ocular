@@ -7,9 +7,11 @@ class Ocular
 
           def initialize
             @events = []
+            @logger = Ocular::DSL::Logger.new
           end
 
           include Ocular::Mixin::FromFile
+          include Ocular::DSL::Logging
 
           def onEvent(factory_class, &block)
             eventbase = Ocular::DSL::EventBase.new(&block)
