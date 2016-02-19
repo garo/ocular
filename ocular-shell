@@ -52,8 +52,6 @@ class OptparseExample
 end  # class OptparseExample
 
 options = OptparseExample.parse(ARGV)
-pp options
-pp ARGV
 
 if ARGV.length == 0
     puts "Missing script file to run. use -h to get more info"

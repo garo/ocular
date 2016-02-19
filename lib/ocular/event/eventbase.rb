@@ -17,7 +17,6 @@ class Ocular
             end
 
             def exec(run_context)
-                puts "Running #{run_context}"
                 run_context.proxy = self.proxy
                 run_context.instance_eval(&@callback)
             end

@@ -14,6 +14,7 @@ class Ocular
 
           include Ocular::Mixin::FromFile
           include Ocular::DSL::Logging
+          include Ocular::DSL::SSH
 
           def onEvent(factory_class, &block)
             eventbase = Ocular::DSL::EventBase.new(&block)

@@ -1,7 +1,7 @@
 require 'pp'
 
 onEvent nil do
-    asdf("localhost")
+    asdf(ARGV[0])
 end
 
 def asdf(host)
