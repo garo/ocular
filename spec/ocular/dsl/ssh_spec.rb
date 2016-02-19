@@ -3,7 +3,7 @@ require 'ocular'
 
 RSpec.describe Ocular::DSL::SSH do
 
-
+=begin
     it "#to_ssh returns object" do
         a = nil
         ef = Ocular::Event::EventFactory.new
@@ -19,6 +19,6 @@ RSpec.describe Ocular::DSL::SSH do
         expect(a).not_to eq(nil)
 
     end
-
+=end
 end
 

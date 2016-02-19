@@ -2,9 +2,11 @@ $:.unshift(File.dirname(__FILE__) + '/lib')
 
 puts "gemspec loaded"
 
+require 'ocular/version'
+
 Gem::Specification.new do |s|
   s.name    = 'ocular'
-  s.version = "2.0"
+  s.version = Ocular::Version
   s.date = Time.now.utc.strftime("%Y-%m-%d")
   s.platform    = Gem::Platform::RUBY
   s.summary = "Tool to create simple operational scripts"

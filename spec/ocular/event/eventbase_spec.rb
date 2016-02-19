@@ -12,6 +12,7 @@ RSpec.describe Ocular::DSL::EventBase do
 
             class TestRunContext
                 attr_accessor :variable
+                attr_accessor :proxy
 
                 def initialize
                     @variable = false
@@ -28,6 +29,7 @@ RSpec.describe Ocular::DSL::EventBase do
             expect(context.variable).to eq(true)
             expect(a).to eq(true)
         end
+
     end
 end
 

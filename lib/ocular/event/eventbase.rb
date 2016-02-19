@@ -9,6 +9,8 @@ class Ocular
             include Ocular::DSL::SSH
             include Ocular::DSL::Logging
 
+            attr_accessor :proxy
+
 
             def initialize(&block)
               @callback = block
@@ -16,6 +18,7 @@ class Ocular
 
             def exec(run_context)
                 puts "Running #{run_context}"
+                run_context.proxy = self.proxy
                 run_context.instance_eval(&@callback)
             end
 
