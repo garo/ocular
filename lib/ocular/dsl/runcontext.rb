@@ -1,7 +1,5 @@
 
 require 'securerandom'
-require 'ocular/dsl/logging'
-require 'logger'
 
 class Ocular
     module DSL
