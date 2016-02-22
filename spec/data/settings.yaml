@@ -1,0 +1,5 @@
+test_setting: Hello, World!
+
+aws:
+  aws_access_key_id: asdf
+  aws_secret_access_key: asdf

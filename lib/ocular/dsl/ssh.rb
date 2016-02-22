@@ -6,7 +6,11 @@ class Ocular
         module SSH
 
             def ssh_to(hostname)
-                rbox = ::Rye::Box.new(hostname, :safe => false, :password_prompt => false)
+                settings = ::Ocular::Settings::get('ssh').inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+                settings[:password_prompt] = false
+                settings[:safe] = false
+
+                rbox = ::Rye::Box.new(hostname, settings)
                 return rbox
             end
 

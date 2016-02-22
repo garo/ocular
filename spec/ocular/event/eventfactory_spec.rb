@@ -65,12 +65,12 @@ RSpec.describe Ocular::Event::EventFactory do
 
         it "supports delegated functions calls out from EventBase instance to the proxy" do
             ef = Ocular::Event::EventFactory.new
-            @@uniquevariablenameineventfactoryspec = false
+            $uniquevariablenameineventfactoryspec = false
 
             proxy = ef.load_from_block "test_dsl" do
                 def testdelegate(newvalue)
                     puts "testdelegate called with #{newvalue}"
-                    @@uniquevariablenameineventfactoryspec = newvalue
+                    $uniquevariablenameineventfactoryspec = newvalue
                 end
                 onEvent EventFactoryTestClass do
                     testdelegate("Hello")
@@ -80,12 +80,11 @@ RSpec.describe Ocular::Event::EventFactory do
 
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
-            expect(@@uniquevariablenameineventfactoryspec).to eq("Hello")
+            expect($uniquevariablenameineventfactoryspec).to eq("Hello")
         end
 
         it "supports raised NoMethodError on undefined delegated method" do
             ef = Ocular::Event::EventFactory.new
-            @@uniquevariablenameineventfactoryspec = false
 
             proxy = ef.load_from_block "test_dsl" do
                 onEvent EventFactoryTestClass do

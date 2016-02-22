@@ -58,8 +58,10 @@ if ARGV.length == 0
     exit
 end
 
+Ocular::Settings.load_from_file(File.expand_path("~/.ocular.yaml"))
+
 ef = Ocular::Event::EventFactory.new
-proxy = ef.load_from_file(ARGV[0])
+proxy = ef.load_from_file(ARGV.shift)
 
 context = Ocular::DSL::RunContext.new
 eventbase = proxy.events[0]

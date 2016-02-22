@@ -1,4 +1,5 @@
 require 'ocular/mixin/from_file'
+require 'ocular/dsl/fog'
 require 'ocular/dsl/ssh'
 require 'ocular/dsl/logging'
 
@@ -7,6 +8,7 @@ class Ocular
 
         class EventBase
             include Ocular::DSL::SSH
+            include Ocular::DSL::Fog
             include Ocular::DSL::Logging
 
             attr_accessor :proxy

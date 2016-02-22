@@ -1,11 +1,12 @@
 require 'pp'
 
 onEvent nil do
-    asdf(ARGV[0])
+    ssh_example(ARGV[0])
 end
 
-def asdf(host)
+def ssh_example(host)
+    debug("Connecting to #{host}")
     r = ssh_to(host)
-    pp r.execute("ls")
+    pp r.execute("ls /")
 end
 

@@ -24,6 +24,6 @@ The goal is that a new script could be written really quickly to automate a prev
   s.licenses = ["Apache 2.0"]
   s.require_path = 'lib'
   s.add_runtime_dependency('rye', '0.9.13')
-  s.add_runtime_dependency('aws-sdk', '2.2.18')
+  s.add_runtime_dependency('fog')
   s.add_development_dependency('rspec', '3.4.0')
 end

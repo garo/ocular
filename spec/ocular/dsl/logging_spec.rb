@@ -10,22 +10,22 @@ RSpec.describe Ocular::DSL::Logging do
 
     it "#info can be used to log a string" do
         rc = Ocular::DSL::RunContext.new
-        rc.debug("info msg")
+        rc.info("info msg")
     end
 
     it "#warn can be used to log a string" do
         rc = Ocular::DSL::RunContext.new
-        rc.debug("warn msg")
+        rc.warn("warn msg")
     end
 
     it "#error can be used to log a string" do
         rc = Ocular::DSL::RunContext.new
-        rc.debug("error msg")
+        rc.error("error msg")
     end
     
     it "#fatal can be used to log a string" do
         rc = Ocular::DSL::RunContext.new
-        rc.debug("fatal msg")
+        rc.fatal("fatal msg")
     end
 
 end

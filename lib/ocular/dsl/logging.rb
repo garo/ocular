@@ -10,19 +10,19 @@ class Ocular
             alias log debug
 
             def info(message = nil, &block)
-                add(Severity::INFO, nil, message, &block)
+                @logger.add(Logger::Severity::INFO, message, @run_id, &block)
             end
 
             def warn(message = nil, &block)
-                add(Severity::INFO, nil, message, &block)
+                @logger.add(Logger::Severity::WARN, message, @run_id, &block)
             end
 
             def error(message = nil, &block)
-                add(Severity::INFO, nil, message, &block)
+                @logger.add(Logger::Severity::ERROR, message, @run_id, &block)
             end
 
             def fatal(message = nil, &block)
-                add(Severity::INFO, nil, message, &block)
+                @logger.add(Logger::Severity::FATAL, message, @run_id, &block)
             end
 
 
