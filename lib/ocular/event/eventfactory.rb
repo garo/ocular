@@ -31,6 +31,8 @@ class Ocular
 
         class EventFactory
 
+            attr_accessor :handlers
+
             def initialize
                 @files = {}
                 @handlers = ::Ocular::Inputs::Handlers.new

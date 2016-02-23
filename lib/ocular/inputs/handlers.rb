@@ -8,7 +8,6 @@ class Ocular
             end
 
             def get(klass)
-                puts "Trying to get #{klass}"
                 if @map[klass]
                     return @map[klass]
                 end

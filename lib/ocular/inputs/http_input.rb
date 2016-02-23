@@ -12,8 +12,13 @@ class Ocular
             module DSL
 
                 def onGET(path, opts = {}, &block)
-                    #puts "onGET: #{path}, options: #{opts}, block #{block}"
-                    pp self
+                    handler = handlers.get(::Ocular::Inputs::HTTP::Input)
+                    handler.add_get(path, opts, &block)
+                end
+
+                def onPOST(path, opts = {}, &block)
+                    handler = handlers.get(::Ocular::Inputs::HTTP::Input)
+                    handler.add_post(path, opts, &block)
                 end
 
             end
@@ -37,8 +42,12 @@ class Ocular
                     end
                 end
 
-                def add_route(verb, path, options = {}, &block)
+                def add_get(path, options = {}, &block)
                     @app_class.get(path, options, &block)
+                end
+
+                def add_post(path, options = {}, &block)
+                    @app_class.post(path, options, &block)
                 end
 
                 def initialize(settings_factory)
