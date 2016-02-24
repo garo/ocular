@@ -13,31 +13,12 @@ class Ocular
 
                 def onGET(path, opts = {}, &block)
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
-                    if path[0] == "/"
-                        path = path[1..-1]
-                    end
-
-                    if script_name
-                        name = "/" + script_name + "/" + path
-                    else
-                        name = "/" + path
-                    end
-                    puts "Adding GET handler to #{name}"
-                    handler.add_get(name, opts, &block)
+                    handler.add_get(script_name, path, opts, &block)
                 end
 
                 def onPOST(path, opts = {}, &block)
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
-                    if path[0] == "/"
-                        path = path[1..-1]
-                    end
-                    
-                    if script_name
-                        name = script_name + "/" + path
-                    else
-                        name = path
-                    end                    
-                    handler.add_post(name, opts, &block)
+                    handler.add_post(script_name, path, opts, &block)
                 end
 
             end
@@ -61,12 +42,30 @@ class Ocular
                     end
                 end
 
-                def add_get(path, options = {}, &block)
-                    @app_class.get(path, options, &block)
+                def generate_uri_from_names(script_name, path)
+                    puts "generate_uri_from_names: #{script_name}, #{path}"
+                    if path[0] == "/"
+                        path = path[1..-1]
+                    end
+                    
+                    if script_name && script_name != ""
+                        name = script_name + "/" + path
+                    else
+                        name = path
+                    end
+
+                    return "/" + name
                 end
 
-                def add_post(path, options = {}, &block)
-                    @app_class.post(path, options, &block)
+                def add_get(script_name, path, options = {}, &block)
+                    name = generate_uri_from_names(script_name, path)
+                    puts "adding get at #{name}"
+                    @app_class.get(name, options, &block)
+                end
+
+                def add_post(script_name, path, options = {}, &block)
+                    name = generate_uri_from_names(script_name, path)                    
+                    @app_class.post(name, options, &block)
                 end
 
                 def initialize(settings_factory)

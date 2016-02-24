@@ -18,7 +18,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
     it "can be used to define custom routes" do
         settings = {:http => {:port => 8082}}
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
-        input.add_get('/custompath', {}) do
+        input.add_get('', '/custompath', {}) do
             return "customresponse"
         end
         input.start()
@@ -69,7 +69,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
             input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
             routes = input.instance_variable_get(:@app_class).instance_variable_get(:@routes)
-            expect(routes["POST"][0][0]).to eq(/\Atest_dsl\/newroute\z/)
+            expect(routes["POST"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
         end        
     end
 
