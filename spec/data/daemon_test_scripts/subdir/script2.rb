@@ -1,3 +1,4 @@
-onGET "/script2" do
+
+onGET "/handler" do
     "route called"
 end

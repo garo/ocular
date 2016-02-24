@@ -6,11 +6,11 @@ class Ocular
     module Event
         class DefinitionProxy
             attr_accessor :events
-            attr_accessor :klass_name
+            attr_reader :script_name
             attr_accessor :handlers
 
-            def initialize(klass_name, handlers)
-                self.klass_name = klass_name
+            def initialize(script_name, handlers)
+                @script_name = script_name
                 @events = []
                 @logger = Ocular::DSL::Logger.new
                 @handlers = handlers
@@ -44,7 +44,7 @@ class Ocular
                     name = file
                 end
 
-                proxy = DefinitionProxy.new(file, @handlers)
+                proxy = DefinitionProxy.new(name, @handlers)
                 proxy.from_file(file)
                 @files[name] = proxy
                 return proxy

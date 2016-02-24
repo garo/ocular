@@ -16,7 +16,8 @@ RSpec.describe Ocular::Event::EventFactory do
     describe "#load_from_file" do
         it "can load sample dsl" do
             ef = Ocular::Event::EventFactory.new
-            proxy = ef.load_from_file('spec/data/dsl-example.rb')
+            proxy = ef.load_from_file('spec/data/dsl-example.rb', 'dsl-example')
+            expect(proxy.script_name).to eq('dsl-example')
             eventbase = proxy.events[0]
 
             context = Ocular::DSL::RunContext.new
@@ -41,7 +42,7 @@ RSpec.describe Ocular::Event::EventFactory do
             expect {
                 eventbase.exec(context)
             }.to raise_error(NoMethodError)
-        end        
+        end
     end
 
     describe "#load_from_block" do

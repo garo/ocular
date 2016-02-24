@@ -16,10 +16,23 @@ class Ocular
             return Dir::glob("#{root}/**/*.rb")
         end
 
+        def get_name_from_file(filename)
+
+            # -4 will strip the ".rb" away from the end
+            name = filename[@root_path.length..-4]
+
+            # If root_path is empty then we need to strip the '/' from the beginning
+            if name[0] == '/'
+                name = name[1..-1]
+            end
+
+            return name
+        end
+
         def load_script_files()
             files = self.get_script_files(@root_path)
             for file in files
-                @eventfactory.load_from_file(file, file[@root_path.length+1..-1])
+                @eventfactory.load_from_file(file, get_name_from_file(file))
             end
         end
 

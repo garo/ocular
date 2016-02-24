@@ -45,7 +45,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
             input.start()
             port = ::Ocular::Settings.get(:inputs)[:http][:port]
-            response = Faraday.get("http://localhost:#{port}/newroute")
+            response = Faraday.get("http://localhost:#{port}/test_dsl/newroute")
             expect(response.status).to eq(200)
             expect(response.body).to eq("route called")
             expect(a).to eq("test")
@@ -54,8 +54,8 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             routes = input.instance_variable_get(:@app_class).instance_variable_get(:@routes)
             # The routes object maps on how sinatra does its route setup. Read more at
             # https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb#L1585           
-            expect(routes["GET"][0][0]).to eq(/\A\/newroute\z/)
-            expect(routes["HEAD"][0][0]).to eq(/\A\/newroute\z/)
+            expect(routes["GET"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
+            expect(routes["HEAD"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
         end
 
         it "#onPOST can be used to define a route" do
@@ -69,7 +69,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
             input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
             routes = input.instance_variable_get(:@app_class).instance_variable_get(:@routes)
-            expect(routes["POST"][0][0]).to eq(/\A\/newroute\z/)
+            expect(routes["POST"][0][0]).to eq(/\Atest_dsl\/newroute\z/)
         end        
     end
 

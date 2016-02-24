@@ -13,12 +13,31 @@ class Ocular
 
                 def onGET(path, opts = {}, &block)
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
-                    handler.add_get(path, opts, &block)
+                    if path[0] == "/"
+                        path = path[1..-1]
+                    end
+
+                    if script_name
+                        name = "/" + script_name + "/" + path
+                    else
+                        name = "/" + path
+                    end
+                    puts "Adding GET handler to #{name}"
+                    handler.add_get(name, opts, &block)
                 end
 
                 def onPOST(path, opts = {}, &block)
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
-                    handler.add_post(path, opts, &block)
+                    if path[0] == "/"
+                        path = path[1..-1]
+                    end
+                    
+                    if script_name
+                        name = script_name + "/" + path
+                    else
+                        name = path
+                    end                    
+                    handler.add_post(name, opts, &block)
                 end
 
             end
