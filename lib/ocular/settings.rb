@@ -9,11 +9,10 @@ class Ocular
         include Singleton
 
         def initialize()
-            filename = ENV['OCULAR_SETTINGS']
-            self.settings = ::Ocular::deep_symbolize(YAML::load_file(filename))
         end
 
         def self.load_from_file(filename)
+            #puts "Loaded settings from #{filename}"
             @settings = ::Ocular::deep_symbolize(YAML::load_file(filename))
         end
 

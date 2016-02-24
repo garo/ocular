@@ -5,43 +5,48 @@ require 'ocular/inputs/http_input.rb'
 class Ocular
     module Event
         class DefinitionProxy
-          attr_accessor :events
-          attr_accessor :klass_name
-          attr_accessor :handlers
+            attr_accessor :events
+            attr_accessor :klass_name
+            attr_accessor :handlers
 
-          def initialize(klass_name, handlers)
-            self.klass_name = klass_name
-            @events = []
-            @logger = Ocular::DSL::Logger.new
-            @handlers = handlers
-          end
+            def initialize(klass_name, handlers)
+                self.klass_name = klass_name
+                @events = []
+                @logger = Ocular::DSL::Logger.new
+                @handlers = handlers
+            end
 
-          include Ocular::Mixin::FromFile
-          include Ocular::DSL::Logging
-          include Ocular::DSL::SSH
-          include Ocular::DSL::Fog
-          include Ocular::Inputs::HTTP::DSL
+            include Ocular::Mixin::FromFile
+            include Ocular::DSL::Logging
+            include Ocular::DSL::SSH
+            include Ocular::DSL::Fog
+            include Ocular::Inputs::HTTP::DSL
 
-          def onEvent(factory_class, &block)
-            eventbase = Ocular::DSL::EventBase.new(&block)
-            eventbase.proxy = self
-            @events << eventbase
-          end
+            def onEvent(factory_class, &block)
+                eventbase = Ocular::DSL::EventBase.new(&block)
+                eventbase.proxy = self
+                @events << eventbase
+            end
         end
 
         class EventFactory
 
             attr_accessor :handlers
+            attr_accessor :files
 
             def initialize
                 @files = {}
                 @handlers = ::Ocular::Inputs::Handlers.new
             end
             
-            def load_from_file(file)
+            def load_from_file(file, name = nil)
+                if !name
+                    name = file
+                end
+
                 proxy = DefinitionProxy.new(file, @handlers)
                 proxy.from_file(file)
-                @files[file] = proxy
+                @files[name] = proxy
                 return proxy
             end
 
@@ -52,6 +57,17 @@ class Ocular
                 return proxy
             end
 
+            def get(name)
+                return @files[name]
+            end
+
+            def start_input_handlers()
+                @handlers.start()
+            end
+
+            def stop_input_handlers()
+                @handlers.stop()
+            end
         end
     end
 end

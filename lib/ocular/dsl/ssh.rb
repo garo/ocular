@@ -6,7 +6,7 @@ class Ocular
         module SSH
 
             def ssh_to(hostname)
-                settings = ::Ocular::Settings::get('ssh').inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+                settings = ::Ocular::Settings::get(:ssh)
                 settings[:password_prompt] = false
                 settings[:safe] = false
 

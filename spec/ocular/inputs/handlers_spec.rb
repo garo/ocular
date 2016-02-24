@@ -16,6 +16,36 @@ RSpec.describe Ocular::Inputs::Handlers do
 
         b = handlers.get(::Ocular::Inputs::HTTP::Input)
         expect(a).to eq(b)
+    end
+
+    it "can start handlers" do
+
+        class TestInput < ::Ocular::Inputs::Base
+            attr_reader :started
+
+            def initialize(settings)
+                @started = false
+            end
+
+            def start()
+                @started = true
+            end
+
+            def stop()
+                @started = false
+            end            
+        end
+
+        handlers = ::Ocular::Inputs::Handlers.new
+        a = handlers.get(TestInput)
+        expect(a).not_to eq(nil)
+        expect(a.started).to eq(false)
+
+        handlers.start()
+        expect(a.started).to eq(true)
+
+        handlers.stop()
+        expect(a.started).to eq(false)
 
     end
 
