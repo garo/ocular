@@ -6,21 +6,9 @@ class Ocular
 
         attr_accessor :eventfactory
 
-        def initialize(filename, root_path)
-            if !filename and ENV['OCULAR_SETTINGS'] != nil
-                filename = File.expand_path(ENV['OCULAR_SETTINGS'])
-            end
-
-            if !filename or !File.exists?(filename)
-                filename = File.expand_path('~/.ocular.yaml')
-            end
-
-            if !filename or !File.exists?(filename)
-                filename = File.expand_path('/etc/ocular.yaml')
-            end
+        def initialize(root_path)
 
             @root_path = root_path
-            Ocular::Settings.load_from_file(filename)
             @eventfactory = ::Ocular::Event::EventFactory.new
         end
 
@@ -41,6 +29,6 @@ class Ocular
 
         def stop_input_handlers()
             @eventfactory.stop_input_handlers()
-        end        
+        end
     end
 end

@@ -48,6 +48,5 @@ RSpec.describe Ocular::Inputs::Handlers do
         expect(a.started).to eq(false)
 
     end
-
 end
 
