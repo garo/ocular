@@ -30,5 +30,17 @@ class Ocular
         def stop_input_handlers()
             @eventfactory.stop_input_handlers()
         end
+
+        def wait()
+            while true
+                begin
+                    sleep 60
+                rescue Interrupt
+                    stop_input_handlers()
+                    puts "\nGoing to exit"
+                    return
+                end
+            end
+        end
     end
 end

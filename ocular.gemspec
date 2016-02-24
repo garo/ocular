@@ -23,6 +23,7 @@ The goal is that a new script could be written really quickly to automate a prev
   s.homepage    = "http://github.com/garo/ocular"
   s.licenses = ["Apache 2.0"]
   s.require_path = 'lib'
+  s.executables << "ocular"
   s.add_runtime_dependency('rye', '0.9.13')
   s.add_runtime_dependency('fog', '1.37.0')
   s.add_runtime_dependency('puma', '2.16.0')
