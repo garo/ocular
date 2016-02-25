@@ -23,6 +23,7 @@ class Ocular
                     raise NoMethodError("undefined method `#{method_sym}` in event #{self.class_name}")
                 end
             end
+
         end
     end
 end

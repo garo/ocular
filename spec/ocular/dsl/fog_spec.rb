@@ -9,11 +9,11 @@ RSpec.describe Ocular::DSL::Fog do
         a = nil
         ef = Ocular::Event::EventFactory.new
         proxy = ef.load_from_block "test_dsl" do
-            onEvent nil do
+            onEvent "name" do
                 a = aws()
             end                             
         end
-        eventbase = proxy.events[0]
+        eventbase = proxy.events["onEvent"]["name"]
 
         context = Ocular::DSL::RunContext.new
         eventbase.exec(context)
@@ -26,11 +26,11 @@ RSpec.describe Ocular::DSL::Fog do
         a = nil
         ef = Ocular::Event::EventFactory.new
         proxy = ef.load_from_block "test_dsl" do
-            onEvent nil do
+            onEvent "name" do
                 a = autoscaling()
             end                             
         end
-        eventbase = proxy.events[0]
+        eventbase = proxy.events["onEvent"]["name"]
 
         context = Ocular::DSL::RunContext.new
         eventbase.exec(context)

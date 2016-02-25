@@ -15,25 +15,20 @@ class Ocular
 
             module DSL
 
-            def onEvent(factory_class, &block)
-                eventbase = Ocular::DSL::EventBase.new(&block)
-                eventbase.proxy = self
-                @events << eventbase
-            end
 
-                def onGET(path, opts = {}, &block)
+                def onGET(path, opts = {}, &block)                    
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
-                    handler.add_get(script_name, path, opts, &block)
+                    handler.add_get(script_name, path, opts, self, &block)
                 end
 
                 def onPOST(path, opts = {}, &block)
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
-                    handler.add_post(script_name, path, opts, &block)
+                    handler.add_post(script_name, path, opts, self, &block)
                 end
 
                 def onDELETE(path, opts = {}, &block)
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
-                    handler.add_delete(script_name, path, opts, &block)
+                    handler.add_delete(script_name, path, opts, self, &block)
                 end
             end
 
@@ -229,25 +224,36 @@ class Ocular
                     return "/" + name
                 end
 
-                def add_get(script_name, path, options = {}, &block)
+                def add_get(script_name, path, options, proxy, &block)
                     name = generate_uri_from_names(script_name, path)
-                    route('GET', name, options, &block)
+                    route('GET', name, options, proxy, &block)
                 end
 
-                def add_post(script_name, path, options = {}, &block)
+                def add_post(script_name, path, options, proxy, &block)
                     name = generate_uri_from_names(script_name, path)
-                    route('POST', name, options, &block)
+                    route('POST', name, options, proxy, &block)
                 end
 
-                def add_delete(script_name, path, options = {}, &block)
+                def add_delete(script_name, path, options, proxy, &block)
                     name = generate_uri_from_names(script_name, path)
-                    route('DELETE', name, options, &block)
+                    route('DELETE', name, options, proxy, &block)
                 end                
 
-                def route(verb, path, options = {}, &block)
+                def build_signature(pattern, keys, &block)
+                    return [pattern, keys, block]
+                end
+
+                def route(verb, path, options, proxy, &block)
+                    eventbase = Ocular::DSL::EventBase.new(&block)
+                    eventbase.proxy = proxy
+                    (proxy.events[verb] ||= {})[path] = eventbase
+
                     pattern, keys = compile(path)
 
-                    (@routes[verb] ||= []) << [pattern, keys, block]
+                    (@routes[verb] ||= []) << build_signature(pattern, keys) do |context|
+                        puts "******* signature #{context}"
+                        eventbase.exec(context)
+                    end
                 end
 
 
@@ -395,6 +401,9 @@ class Ocular
 
                 end
 
+                def call_block(context)
+                    yield(context)
+                end
 
                 def route!(context)
                     if routes = @routes[context.request.request_method]
@@ -402,7 +411,8 @@ class Ocular
                             process_route(context, pattern, keys) do |*args|
                                 #env['route'] = block.instance_variable_get(:@route_name)
 
-                                throw :halt, context.instance_eval(&block)
+                                #throw :halt, context.exec(&block)
+                                throw :halt, call_block(context, &block)
                             end
                         end
                     end
@@ -425,7 +435,7 @@ class Ocular
                     yield(self, values)
 
                 rescue
-                    context.env['sinatra.error.params'] = context.params
+                    context.env['error.params'] = context.params
                     raise
                 ensure
                     @params = original if original

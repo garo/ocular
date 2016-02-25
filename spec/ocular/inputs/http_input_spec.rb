@@ -20,8 +20,9 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
         settings = Ocular::Settings.get(:inputs)
 
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
-        input.add_get('', '/custompath', {}) do
+        input.add_get('', '/custompath', {}, proxy) do
             "customresponse"
         end
         input.start()
@@ -33,12 +34,13 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     end
 
-    it "can be used to define custom routes" do
+    it "can be used to define custom routes with arguments" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
         settings = Ocular::Settings.get(:inputs)
 
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
-        input.add_get('', '/custompath/:foo1/:foo2', {}) do
+        input.add_get('', '/custompath/:foo1/:foo2', {}, proxy) do
             "#{params["foo1"]} is #{params["foo2"]}"
         end
         input.start()
@@ -54,8 +56,9 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
         settings = Ocular::Settings.get(:inputs)
 
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
-        input.add_post('', '/custompath', {}) do
+        input.add_post('', '/custompath', {}, proxy) do
             "foo is #{params["foo"]}"
         end
         input.start()
@@ -74,8 +77,9 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         settings = Ocular::Settings.get(:inputs)
 
         deleted = nil
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
-        input.add_delete('', '/custompath/:id', {}) do
+        input.add_delete('', '/custompath/:id', {}, proxy) do
             deleted = params["id"].to_i
             ""
         end
@@ -128,7 +132,18 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
             routes = input.routes
             expect(routes["POST"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
-        end        
+        end
+
+        it "#onGET will register route into DefinitionProxy for tracking" do
+            ef = Ocular::Event::EventFactory.new
+            proxy = ef.load_from_block "test_dsl" do
+                onPOST "/newroute" do
+                    ""
+                end                             
+            end
+
+            expect(ef.get("test_dsl").events["POST"]["/test_dsl/newroute"]).not_to eq(nil)
+        end  
     end
 end
 

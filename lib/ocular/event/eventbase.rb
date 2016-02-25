@@ -19,6 +19,7 @@ class Ocular
             end
 
             def exec(run_context)
+                puts "eventbase exec is called for #{self.proxy} with #{@callback}"
                 run_context.proxy = self.proxy
                 run_context.instance_eval(&@callback)
             end

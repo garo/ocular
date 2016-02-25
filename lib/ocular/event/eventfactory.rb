@@ -7,11 +7,11 @@ class Ocular
         class DefinitionProxy
             attr_accessor :events
             attr_reader :script_name
-            attr_accessor :handlers
+            attr_accessor :handlers, :events
 
             def initialize(script_name, handlers)
                 @script_name = script_name
-                @events = []
+                @events = {}
                 @logger = Ocular::DSL::Logger.new
                 @handlers = handlers
             end
@@ -22,10 +22,10 @@ class Ocular
             include Ocular::DSL::Fog
             include Ocular::Inputs::HTTP::DSL
 
-            def onEvent(factory_class, &block)
+            def onEvent(type, &block)
                 eventbase = Ocular::DSL::EventBase.new(&block)
                 eventbase.proxy = self
-                @events << eventbase
+                (@events["onEvent"] ||= {})[type] = eventbase
             end
         end
 

@@ -18,7 +18,9 @@ RSpec.describe Ocular::Event::EventFactory do
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_file('spec/data/dsl-example.rb', 'dsl-example')
             expect(proxy.script_name).to eq('dsl-example')
-            eventbase = proxy.events[0]
+            puts "************************"
+            pp proxy.events
+            eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
@@ -27,7 +29,7 @@ RSpec.describe Ocular::Event::EventFactory do
         it "supports delegated functions calls out from EventBase instance to the proxy" do
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_file('spec/data/dsl-top-level-method-working.rb')
-            eventbase = proxy.events[0]
+            eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
@@ -36,7 +38,7 @@ RSpec.describe Ocular::Event::EventFactory do
         it "supports raised NoMethodError on undefined delegated method" do
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_file('spec/data/dsl-top-level-method-missing.rb')
-            eventbase = proxy.events[0]
+            eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
             context = Ocular::DSL::RunContext.new
             expect {
@@ -56,7 +58,7 @@ RSpec.describe Ocular::Event::EventFactory do
                     globalTestFunc("Hello")
                 end
             end
-            eventbase = proxy.events[0]
+            eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
@@ -77,7 +79,7 @@ RSpec.describe Ocular::Event::EventFactory do
                     testdelegate("Hello")
                 end
             end
-            eventbase = proxy.events[0]
+            eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
