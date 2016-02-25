@@ -32,7 +32,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         input.stop()
 
     end
-=begin
+ 
     describe "#dsl" do
         it "#onGET can be used to define a route" do
             a = nil
@@ -54,7 +54,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             expect(a).to eq("test")
             input.stop()
 
-            routes = input.instance_variable_get(:@app_class).instance_variable_get(:@routes)
+            routes = input.routes
             # The routes object maps on how sinatra does its route setup. Read more at
             # https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb#L1585           
             expect(routes["GET"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
@@ -70,10 +70,9 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             end
 
             input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
-            routes = input.instance_variable_get(:@app_class).instance_variable_get(:@routes)
+            routes = input.routes
             expect(routes["POST"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
         end        
     end
-=end
 end
 

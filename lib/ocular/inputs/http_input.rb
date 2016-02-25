@@ -35,6 +35,7 @@ class Ocular
 
             class Input < ::Ocular::Inputs::Base
 
+                attr_reader :routes
 
                 class WebRunContext < ::Ocular::DSL::RunContext
                     attr_accessor :request, :response, :params, :env
