@@ -5,7 +5,8 @@ require 'pp'
 RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "can start its server" do
-        settings = {:http => {:port => 8082}}
+        Ocular::Settings.load_from_file("spec/data/settings.yaml")
+        settings = Ocular::Settings.get(:inputs)
 
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
         input.start()
@@ -16,7 +17,9 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
     end
 
     it "can be used to define custom routes" do
-        settings = {:http => {:port => 8082}}
+        Ocular::Settings.load_from_file("spec/data/settings.yaml")
+        settings = Ocular::Settings.get(:inputs)
+
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
         input.add_get('', '/custompath', {}) do
             return "customresponse"
@@ -55,7 +58,6 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             # The routes object maps on how sinatra does its route setup. Read more at
             # https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb#L1585           
             expect(routes["GET"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
-            expect(routes["HEAD"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
         end
 
         it "#onPOST can be used to define a route" do
