@@ -31,6 +31,10 @@ class Ocular
                     handler.add_post(script_name, path, opts, &block)
                 end
 
+                def onDELETE(path, opts = {}, &block)
+                    handler = handlers.get(::Ocular::Inputs::HTTP::Input)
+                    handler.add_delete(script_name, path, opts, &block)
+                end
             end
 
             class Input < ::Ocular::Inputs::Base
@@ -212,7 +216,6 @@ class Ocular
                 end
 
                 def generate_uri_from_names(script_name, path)
-                    puts "generate_uri_from_names: #{script_name}, #{path}"
                     if path[0] == "/"
                         path = path[1..-1]
                     end
@@ -228,22 +231,46 @@ class Ocular
 
                 def add_get(script_name, path, options = {}, &block)
                     name = generate_uri_from_names(script_name, path)
-                    puts "adding get at #{name}"
                     route('GET', name, options, &block)
                 end
 
                 def add_post(script_name, path, options = {}, &block)
-                    name = generate_uri_from_names(script_name, path)                    
+                    name = generate_uri_from_names(script_name, path)
                     route('POST', name, options, &block)
                 end
 
-                def route(verb, path, options = {}, &block)
-                    puts "Defined route #{verb} #{path}"
+                def add_delete(script_name, path, options = {}, &block)
+                    name = generate_uri_from_names(script_name, path)
+                    route('DELETE', name, options, &block)
+                end                
 
+                def route(verb, path, options = {}, &block)
                     pattern, keys = compile(path)
 
                     (@routes[verb] ||= []) << [pattern, keys, block]
                 end
+
+
+                def safe_ignore(ignore)
+                    unsafe_ignore = []
+                    ignore = ignore.gsub(/%[\da-fA-F]{2}/) do |hex|
+                        unsafe_ignore << hex[1..2]
+                        ''
+                    end
+                    unsafe_patterns = unsafe_ignore.map! do |unsafe|
+                        chars = unsafe.split(//).map! do |char|
+                            char == char.downcase ? char : char + char.downcase
+                        end
+
+                        "|(?:%[^#{chars[0]}].|%[#{chars[0]}][^#{chars[1]}])"
+                    end
+                    if unsafe_patterns.length > 0
+                        "((?:[^#{ignore}/?#%]#{unsafe_patterns.join()})+)"
+                    else
+                        "([^#{ignore}/?#]+)"
+                    end
+                end
+
 
                 def compile(path)
                     if path.respond_to? :to_str
@@ -304,7 +331,6 @@ class Ocular
                 end
 
                 def call(env)
-                    puts "WebServer: call(#{env["PATH_INFO"]})"
                     dup.call!(env)
                 end
 
@@ -327,9 +353,6 @@ class Ocular
                 end
 
                 def call!(env)
-                    puts "call!"
-
-
                     context = WebRunContext.new
 
                     context.request = Request.new(env)
@@ -338,16 +361,11 @@ class Ocular
                     context.params = indifferent_params(context.request.params)
 
                     context.response['Content-Type'] = nil
-                    puts "going to dispatch "
                     invoke(context) { |context| dispatch(context) }
-                    puts "dispatch done"
 
                     unless context.response['Content-Type']
                         context.response['Content-Type'] = "text/html"
                     end
-
-                    puts "response:"
-                    pp context.response           
 
                     context.response.finish
                 end
@@ -395,15 +413,13 @@ class Ocular
 
                 def process_route(context, pattern, keys, values = [])
                     route = context.request.path_info
-                    puts "processing route. pattern: #{pattern} against #{route}"
                     route = '/' if route.empty?
                     return unless match = pattern.match(route)
-                    puts "match!"
-                    values += match.captures.map! { |v| force_encoding URI_INSTANCE.unescape(v) if v }
+                    values += match.captures.map! { |v| URI_INSTANCE.unescape(v) if v }
 
                     if values.any?
-                        original, @params = params, params.merge('splat' => [], 'captures' => values)
-                        keys.zip(values) { |k,v| Array === @params[k] ? @params[k] << v : @params[k] = v if v }
+                        original, @params = context.params, context.params.merge('splat' => [], 'captures' => values)
+                        keys.zip(values) { |k,v| Array === context.params[k] ? context.params[k] << v : context.params[k] = v if v }
                     end
 
                     yield(self, values)
