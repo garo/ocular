@@ -35,13 +35,7 @@ class Ocular
                     r = Results.new
 
                     begin
-                        retval = context.instance_eval(&@callback)
-
-                        # This check is to make sure that whatever we return that it can be serialised
-                        if String === retval or Array === retval
-                            r.response = retval
-                        end
-
+                        r.response = context.instance_eval(&@callback)
                     rescue Exception => error
                         r.error = error
                     end
