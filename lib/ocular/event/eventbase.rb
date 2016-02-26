@@ -44,12 +44,15 @@ class Ocular
                     response_data = Marshal.dump(r)
                     writer.puts(response_data)
                     writer.close
+
                 end
                 writer.close
 
-                Process.wait(child_pid)
-                r = Marshal.load(reader.read)
+                data = reader.read
+                r = Marshal.load(data)
                 reader.close
+                Process.wait(child_pid)
+
 
                 if r.error
                     raise r.error

@@ -30,6 +30,17 @@ RSpec.describe Ocular::DSL::EventBase do
             expect(a).to eq(true)
         end
 
+        it "can return big amounts of data from forked exec" do
+            test = Ocular::DSL::EventBase.new do
+                return "x"*65537
+            end
+            
+            context = Ocular::DSL::RunContext.new
+            ret = test.exec_fork(context)
+
+            expect(ret.length).to eq(65537)
+
+        end
     end
 end
 
