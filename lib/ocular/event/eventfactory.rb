@@ -6,7 +6,7 @@ class Ocular
     module Event
         class DefinitionProxy
             attr_accessor :events
-            attr_reader :script_name
+            attr_reader :script_name, :do_fork
             attr_accessor :handlers, :events
 
             def initialize(script_name, handlers)
@@ -14,6 +14,7 @@ class Ocular
                 @events = {}
                 @logger = Ocular::DSL::Logger.new
                 @handlers = handlers
+                @do_fork = true
             end
 
             include Ocular::Mixin::FromFile
@@ -21,6 +22,10 @@ class Ocular
             include Ocular::DSL::SSH
             include Ocular::DSL::Fog
             include Ocular::Inputs::HTTP::DSL
+
+            def fork(value)
+                @do_fork = value
+            end
 
             def onEvent(type, &block)
                 eventbase = Ocular::DSL::EventBase.new(&block)

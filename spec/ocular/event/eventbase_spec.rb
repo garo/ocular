@@ -9,7 +9,6 @@ RSpec.describe Ocular::DSL::EventBase do
                 a = true
                 setVariable(true)
             end
-            test.do_fork = false
 
             class TestRunContext
                 attr_accessor :variable
@@ -26,7 +25,7 @@ RSpec.describe Ocular::DSL::EventBase do
 
             context = TestRunContext.new
 
-            test.exec(context)
+            test.exec(context, do_fork=false)
             expect(context.variable).to eq(true)
             expect(a).to eq(true)
         end

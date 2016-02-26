@@ -13,14 +13,13 @@ class Ocular
                 attr_accessor :error
             end
 
-            attr_accessor :proxy, :do_fork
+            attr_accessor :proxy
 
             def initialize(&block)
-                @do_fork = true
                 @callback = block
             end
 
-            def exec(context)
+            def exec(context, do_fork = self.proxy.do_fork)
                 context.proxy = self.proxy
                 if do_fork
                     return exec_fork(context)

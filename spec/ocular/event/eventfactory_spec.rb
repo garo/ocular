@@ -52,13 +52,13 @@ RSpec.describe Ocular::Event::EventFactory do
             a = false
 
             proxy = ef.load_from_block "test_dsl" do
+                fork false
                 onEvent EventFactoryTestClass do
                     a = true
                     globalTestFunc("Hello")
                 end
             end
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
-            eventbase.do_fork = false
 
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
@@ -66,11 +66,30 @@ RSpec.describe Ocular::Event::EventFactory do
             expect($globalTestFuncTestStr).to eq("Hello")
         end
 
+        it "can load sample dsl from block and disable forking" do
+            ef = Ocular::Event::EventFactory.new
+            a = false
+
+            proxy = ef.load_from_block "test_dsl" do
+                fork false
+                onEvent EventFactoryTestClass do
+                    a = true
+                end
+            end
+            eventbase = proxy.events["onEvent"][EventFactoryTestClass]
+
+            context = Ocular::DSL::RunContext.new
+            eventbase.exec(context)
+            expect(a).to eq(true)
+            expect($globalTestFuncTestStr).to eq("Hello")
+        end        
+
         it "supports delegated functions calls out from EventBase instance to the proxy" do
             ef = Ocular::Event::EventFactory.new
             $uniquevariablenameineventfactoryspec = false
 
             proxy = ef.load_from_block "test_dsl" do
+                fork false
                 def testdelegate(newvalue)
                     puts "testdelegate called with #{newvalue}"
                     $uniquevariablenameineventfactoryspec = newvalue
@@ -80,8 +99,7 @@ RSpec.describe Ocular::Event::EventFactory do
                 end
             end
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
-            eventbase.do_fork = false
-            
+
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
             expect($uniquevariablenameineventfactoryspec).to eq("Hello")
