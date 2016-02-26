@@ -253,7 +253,6 @@ class Ocular
                     pattern, keys = compile(path)
 
                     (@routes[verb] ||= []) << build_signature(pattern, keys) do |context|
-                        puts "******* signature #{context}"
                         eventbase.exec(context)
                     end
                 end
@@ -499,12 +498,12 @@ class Ocular
 
                 def start()
                     
-                    if @settings[:Verbose]
+                    if @settings[:verbose]
                       @app = Rack::CommonLogger.new(@app, STDOUT)
                     end
 
                     @thread = Thread.new do
-                        events_hander = @settings[:Silent] ? ::Puma::Events.strings : ::Puma::Events.stdio
+                        events_hander = @settings[:silent] ? ::Puma::Events.strings : ::Puma::Events.stdio
                         server   = ::Puma::Server.new(self, events_hander)
 
                         server.add_tcp_listener @settings[:host], @settings[:port]
