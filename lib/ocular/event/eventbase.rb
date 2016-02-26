@@ -35,7 +35,8 @@ class Ocular
                     r = Results.new
 
                     begin
-                        r.response = context.instance_eval(&@callback)
+                        r.response = __call(context, @callback)
+                        #r.response = context.instance_eval(&@callback)
                     rescue Exception => error
                         r.error = error
                     end
@@ -57,7 +58,16 @@ class Ocular
             end
 
             def exec_nofork(context)
-                return context.instance_eval(&@callback)
+                return __call(context, @callback)
+                #context.instance_eval(&@callback)
+            end
+
+            def __call(context, callback)
+                # we use this trickery to workaround the LocalJumpError so that we can use return
+                context.define_singleton_method(:_, &callback)
+                p = context.method(:_).to_proc
+
+                return p.call()
             end
 
         end
