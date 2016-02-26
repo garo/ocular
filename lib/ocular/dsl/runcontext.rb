@@ -7,6 +7,7 @@ class Ocular
             attr_accessor :run_id
             attr_accessor :proxy
             attr_accessor :class_name
+            attr_accessor :event_signature
 
             include Ocular::DSL::Logging
             include Ocular::DSL::SSH

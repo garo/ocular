@@ -9,6 +9,7 @@ RSpec.describe Ocular::DSL::EventBase do
                 a = true
                 setVariable(true)
             end
+            test.do_fork = false
 
             class TestRunContext
                 attr_accessor :variable

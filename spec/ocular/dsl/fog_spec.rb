@@ -14,6 +14,7 @@ RSpec.describe Ocular::DSL::Fog do
             end                             
         end
         eventbase = proxy.events["onEvent"]["name"]
+        eventbase.do_fork = false
 
         context = Ocular::DSL::RunContext.new
         eventbase.exec(context)
@@ -31,7 +32,8 @@ RSpec.describe Ocular::DSL::Fog do
             end                             
         end
         eventbase = proxy.events["onEvent"]["name"]
-
+        eventbase.do_fork = false
+        
         context = Ocular::DSL::RunContext.new
         eventbase.exec(context)
         expect(a).not_to eq(nil)

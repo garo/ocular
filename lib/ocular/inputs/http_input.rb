@@ -253,6 +253,7 @@ class Ocular
                     pattern, keys = compile(path)
 
                     (@routes[verb] ||= []) << build_signature(pattern, keys) do |context|
+                        context.event_signature = [verb, path] 
                         eventbase.exec(context)
                     end
                 end

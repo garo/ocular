@@ -81,25 +81,22 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         input = ::Ocular::Inputs::HTTP::Input.new(settings)
         input.add_delete('', '/custompath/:id', {}, proxy) do
             deleted = params["id"].to_i
-            ""
+            "deleted #{deleted}"
         end
         input.start()
 
         response = Faraday.delete("http://localhost:#{settings[:http][:port]}/custompath/20")
         expect(response.status).to eq(200)
-        expect(response.body).to eq("")
-        expect(deleted).to eq(20)
+        expect(response.body).to eq("deleted 20")
         input.stop()
 
     end        
  
     describe "#dsl" do
         it "#onGET can be used to define a route" do
-            a = nil
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_block "test_dsl" do
                 onGET "/newroute" do
-                    a = "test"
                     "route called"
                 end                             
             end
@@ -111,7 +108,6 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             response = Faraday.get("http://localhost:#{port}/test_dsl/newroute")
             expect(response.status).to eq(200)
             expect(response.body).to eq("route called")
-            expect(a).to eq("test")
             input.stop()
 
             routes = input.routes

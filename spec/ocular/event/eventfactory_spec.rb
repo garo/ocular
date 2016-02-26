@@ -18,8 +18,6 @@ RSpec.describe Ocular::Event::EventFactory do
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_file('spec/data/dsl-example.rb', 'dsl-example')
             expect(proxy.script_name).to eq('dsl-example')
-            puts "************************"
-            pp proxy.events
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
             context = Ocular::DSL::RunContext.new
@@ -45,6 +43,7 @@ RSpec.describe Ocular::Event::EventFactory do
                 eventbase.exec(context)
             }.to raise_error(NoMethodError)
         end
+
     end
 
     describe "#load_from_block" do
@@ -59,6 +58,7 @@ RSpec.describe Ocular::Event::EventFactory do
                 end
             end
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
+            eventbase.do_fork = false
 
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
@@ -80,7 +80,8 @@ RSpec.describe Ocular::Event::EventFactory do
                 end
             end
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
-
+            eventbase.do_fork = false
+            
             context = Ocular::DSL::RunContext.new
             eventbase.exec(context)
             expect($uniquevariablenameineventfactoryspec).to eq("Hello")
