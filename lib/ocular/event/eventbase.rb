@@ -32,12 +32,10 @@ class Ocular
             def exec_fork(context)
                 reader, writer = IO::pipe
                 child_pid = fork do
-                    puts "inside fork"
                     reader.close
                     r = Results.new
 
                     begin
-                        puts "Calling block from inside fork"
                         retval = context.instance_eval(&@callback)
 
                         # This check is to make sure that whatever we return that it can be serialised
@@ -45,9 +43,7 @@ class Ocular
                             r.response = retval
                         end
 
-                        puts "Block done"
                     rescue Exception => error
-                        puts "Error on calling block"
                         r.error = error
                     end
 
@@ -57,11 +53,8 @@ class Ocular
                 end
                 writer.close
 
-                puts "Waiting child to exit"
                 Process.wait(child_pid)
-                puts "child is dead"
                 r = Marshal.load(reader.read)
-                puts "response: #{r}"
                 reader.close
 
                 if r.error
