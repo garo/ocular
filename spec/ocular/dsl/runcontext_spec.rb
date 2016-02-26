@@ -12,5 +12,18 @@ RSpec.describe Ocular::DSL::RunContext do
         end
     end
 
+    it "can register cleanup function" do
+        rc = Ocular::DSL::RunContext.new
+
+        a = false
+        rc.register_cleanup do
+            a = true
+        end
+
+        rc.cleanup()
+
+        expect(a).to eq(true)
+    end
+
 end
 

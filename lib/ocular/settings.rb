@@ -11,8 +11,7 @@ class Ocular
         def initialize()
         end
 
-        def self.find_settings_file_from_system()
-            filename = nil
+        def self.find_settings_file_from_system(filename)
             if ENV['OCULAR_SETTINGS'] != nil
                 filename = File.expand_path(ENV['OCULAR_SETTINGS'])
             end

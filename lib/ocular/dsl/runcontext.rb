@@ -15,6 +15,7 @@ class Ocular
             def initialize
                 @run_id = SecureRandom.uuid()
                 @logger = Ocular::DSL::Logger.new
+                @cleanups = []
             end
 
             def method_missing(method_sym, *arguments, &block)
@@ -25,6 +26,15 @@ class Ocular
                 end
             end
 
+            def register_cleanup(&block)
+                @cleanups << block
+            end
+
+            def cleanup()
+                for i in @cleanups
+                    i.call()
+                end
+            end
         end
     end
 end

@@ -27,6 +27,19 @@ class Ocular
                     })
             end
 
+            def find_servers_in_autoscaling_groups(substring)
+                instances = []
+                for group in autoscaling.groups
+                    if group.id.include?(substring)
+                        for i in group.instances
+                            instances << aws.servers.get(i.id)
+                        end
+                    end
+                end
+
+                return instances
+            end
+
         end
 
     end
