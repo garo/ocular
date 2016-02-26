@@ -7,12 +7,7 @@ class Ocular
     module DSL
 
         class EventBase
-            include Ocular::DSL::SSH
-            include Ocular::DSL::Fog
-            include Ocular::DSL::Logging
-
             attr_accessor :proxy
-
 
             def initialize(&block)
               @callback = block

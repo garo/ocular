@@ -1,4 +1,3 @@
-require 'sinatra/base'
 require 'puma'
 require 'rack'
 require 'rack/server'
@@ -7,6 +6,9 @@ require 'uri'
 
 require 'ocular/inputs/base.rb'
 require 'ocular/dsl/runcontext.rb'
+
+# Some of this code is copied from the excellent Sinatra Ruby web library by
+# Blake Mizerany and Konstantin Haase.
 
 class Ocular
     module Inputs
