@@ -21,6 +21,8 @@ class Ocular
             include Ocular::DSL::Logging
             include Ocular::DSL::SSH
             include Ocular::DSL::Fog
+            include Ocular::DSL::Etcd
+
             include Ocular::Inputs::HTTP::DSL
 
             def fork(value)

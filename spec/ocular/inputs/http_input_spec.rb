@@ -89,8 +89,35 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         expect(response.status).to eq(200)
         expect(response.body).to eq("deleted 20")
         input.stop()
+    end      
 
-    end        
+
+    it "can be used to return custom status codes" do
+        Ocular::Settings.load_from_file("spec/data/settings.yaml")
+        settings = Ocular::Settings.get(:inputs)
+
+        deleted = nil
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
+        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input.add_delete('', '/custompath/:id', {}, proxy) do
+            if params["id"].to_i == 200
+                [200, "Everything is fine"]
+            elsif params["id"].to_i == 409
+                409
+            end
+        end
+        input.start()
+
+        response = Faraday.delete("http://localhost:#{settings[:http][:port]}/custompath/200")
+        expect(response.status).to eq(200)
+        expect(response.body).to eq("Everything is fine")
+
+        response = Faraday.delete("http://localhost:#{settings[:http][:port]}/custompath/409")
+        expect(response.status).to eq(409)
+        expect(response.body).to eq("")
+
+        input.stop()
+    end     
  
     describe "#dsl" do
         it "#onGET can be used to define a route" do

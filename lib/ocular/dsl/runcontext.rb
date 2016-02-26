@@ -11,6 +11,8 @@ class Ocular
 
             include Ocular::DSL::Logging
             include Ocular::DSL::SSH
+            include Ocular::DSL::Fog
+            include Ocular::DSL::Etcd
 
             def initialize
                 @run_id = SecureRandom.uuid()

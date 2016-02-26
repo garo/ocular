@@ -5,6 +5,7 @@ require 'rack/protection'
 require 'uri'
 
 require 'ocular/inputs/base.rb'
+require 'ocular/dsl/dsl.rb'
 require 'ocular/dsl/runcontext.rb'
 
 # Some of this code is copied from the excellent Sinatra Ruby web library by

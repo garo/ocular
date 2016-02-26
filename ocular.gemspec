@@ -30,5 +30,6 @@ The goal is that a new script could be written really quickly to automate a prev
   s.add_runtime_dependency('rack', '1.6.4')
   s.add_runtime_dependency('rack-protection', '1.5.3')
   s.add_runtime_dependency('faraday', '0.9.2')
+  s.add_runtime_dependency('etcd', '0.3.0')
   s.add_development_dependency('rspec', '3.4.0')
 end

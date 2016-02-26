@@ -11,6 +11,7 @@ RSpec.describe Ocular::DSL::Fog do
         proxy = ef.load_from_block "test_dsl" do
             onEvent "name" do
                 a = aws()
+                ""
             end                             
         end
         eventbase = proxy.events["onEvent"]["name"]
@@ -28,6 +29,7 @@ RSpec.describe Ocular::DSL::Fog do
         proxy = ef.load_from_block "test_dsl" do
             onEvent "name" do
                 a = autoscaling()
+                ""
             end                             
         end
         eventbase = proxy.events["onEvent"]["name"]
