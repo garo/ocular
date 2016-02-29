@@ -41,6 +41,27 @@ class Ocular
 
                 class WebRunContext < ::Ocular::DSL::RunContext
                     attr_accessor :request, :response, :params, :env
+
+                    def initialize()
+                        super()
+                        @headers = {}
+                    end
+
+                    def content_type(type)
+                        @headers["Content-Type"] = type
+                    end
+
+                    def exec_wrapper(res)
+                        if Fixnum === res
+                            res = [res, @headers, nil]
+                        end
+
+                        if String === res
+                            res = [200, @headers, res]
+                        end
+
+                        return res
+                    end
                 end
 
 
@@ -259,7 +280,6 @@ class Ocular
                     end
                 end
 
-
                 def safe_ignore(ignore)
                     unsafe_ignore = []
                     ignore = ignore.gsub(/%[\da-fA-F]{2}/) do |hex|
@@ -389,6 +409,20 @@ class Ocular
                     end
                 ensure
                     
+                end
+
+                def invoke(context)
+                    res = catch(:halt) { yield(context) }
+
+                    if Array === res and Fixnum === res.first
+                        res = res.dup
+                        status(context, res.shift)
+                        body(context, res.pop)
+                        headers(context, *res)
+                    elsif res.respond_to? :each
+                        body(context, res)
+                    end
+                    nil # avoid double setting the same response tuple twice
                 end                
 
                 def handle_exception!(context, error)
@@ -443,21 +477,6 @@ class Ocular
                 ensure
                     @params = original if original
                 end                
-
-                def invoke(context)
-                    res = catch(:halt) { yield(context) }
-
-                    res = [res] if Fixnum === res or String === res
-                    if Array === res and Fixnum === res.first
-                        res = res.dup
-                        status(context, res.shift)
-                        body(context, res.pop)
-                        headers(context, *res)
-                    elsif res.respond_to? :each
-                        body(context, res)
-                    end
-                    nil # avoid double setting the same response tuple twice
-                end
 
                 # Creates a Hash with indifferent access.
                 def indifferent_hash

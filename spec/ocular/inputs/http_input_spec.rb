@@ -91,6 +91,25 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         input.stop()
     end      
 
+    it "can use content_type to set it" do
+        Ocular::Settings.load_from_file("spec/data/settings.yaml")
+        settings = Ocular::Settings.get(:inputs)
+
+        deleted = nil
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
+        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input.add_get('', '/custompath', {}, proxy) do
+            content_type 'text/plain'
+            "Hello"
+        end
+        input.start()
+
+        response = Faraday.get("http://localhost:#{settings[:http][:port]}/custompath")
+        expect(response.status).to eq(200)
+        expect(response.body).to eq("Hello")
+        expect(response.env.response_headers["content-type"]).to eq("text/plain")
+        input.stop()
+    end
 
     it "can be used to return custom status codes" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")

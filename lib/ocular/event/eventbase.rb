@@ -70,7 +70,12 @@ class Ocular
                 context.define_singleton_method(:_, &callback)
                 p = context.method(:_).to_proc
 
-                return p.call()
+                reply = p.call()
+                if context.respond_to?(:exec_wrapper)
+                    return context.exec_wrapper(reply)
+                else
+                    return reply
+                end
             end
 
         end
