@@ -96,7 +96,7 @@ else
   proxy = ef.load_from_file(ARGV.shift)
 
   context = Ocular::DSL::RunContext.new
-  eventbase = proxy.events["onEvent"][nil]
+  eventbase = proxy.events["onEvent"]["cli"]
   eventbase.exec(context)
 
 end
