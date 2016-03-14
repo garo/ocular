@@ -435,7 +435,6 @@ class Ocular
                         puts "Internal Server Error: #{error}"
                         puts error.backtrace
                     end
-
                 end
 
                 def call_block(context)
