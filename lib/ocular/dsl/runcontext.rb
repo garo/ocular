@@ -28,7 +28,7 @@ class Ocular
                 if self.proxy
                     self.proxy.send(method_sym, *arguments, &block)
                 else
-                    raise NoMethodError("undefined method `#{method_sym}` in event #{self.class_name}")
+                    raise NoMethodError, "undefined method `#{method_sym}` in event #{self.class_name}"
                 end
             end
 
