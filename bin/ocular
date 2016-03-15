@@ -88,7 +88,48 @@ else
   # Start shell mode
 
   if ARGV.length == 0
-      puts "Missing script file to run. use -h to get more info"
+      puts "Missing script file to run, starting ocular interactive shell. use -h to get more info"
+
+      ARGV.clear
+      require 'irb'
+      IRB.setup nil
+
+      IRB.conf[:PROMPT] = {}
+      IRB.conf[:IRB_NAME] = 'ocular'
+      IRB.conf[:PROMPT][:MY_PROJECT] = {
+        :PROMPT_I => '%N:%03n:%i> ',
+        :PROMPT_N => '%N:%03n:%i> ',
+        :PROMPT_S => '%N:%03n:%i%l ',
+        :PROMPT_C => '%N:%03n:%i* ',
+        :RETURN => "# => %s\n"
+      }
+      IRB.conf[:PROMPT_MODE] = :MY_PROJECT
+
+      IRB.conf[:RC] = false
+
+      require 'irb/completion'
+      require 'irb/ext/save-history'
+      IRB.conf[:READLINE] = true
+      IRB.conf[:SAVE_HISTORY] = 1000
+      IRB.conf[:HISTORY_FILE] = '~/.ocular_history'
+
+      context = Ocular::DSL::RunContext.new
+
+      irb = IRB::Irb.new(IRB::WorkSpace.new(context))
+      IRB.conf[:MAIN_CONTEXT] = irb.context
+
+      trap("SIGINT") do
+        IRB.irb.signal_handle
+      end
+
+      begin
+        catch(:IRB_EXIT) do
+          irb.eval_input
+        end
+      ensure
+        IRB.irb_at_exit
+      end
+
       exit
   end
 
