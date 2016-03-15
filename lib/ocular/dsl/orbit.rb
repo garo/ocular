@@ -12,7 +12,7 @@ class Ocular
                     @etcd = etcd
                 end
 
-                add_help "orbit::get_service_endpoints(service_name)", "Returns an array of ips running service_name"
+                add_help "orbit.get_service_endpoints(service_name)", "Returns an array of ips running service_name"
                 def get_service_endpoints(service_name)
                     orbit_endpoints = []
                     begin

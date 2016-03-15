@@ -5,6 +5,12 @@ def add_help(name, help)
     $dsl_help[name] = help
 end
 
+$dsl_event_help = {}
+
+def add_event_help(name, help)
+    $dsl_event_help[name] = help
+end
+
 
 require 'ocular/dsl/etcd.rb'
 require 'ocular/dsl/fog.rb'

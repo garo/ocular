@@ -1,6 +1,7 @@
 require 'ocular/inputs/handlers.rb'
 require 'ocular/event/eventbase.rb'
 require 'ocular/inputs/http_input.rb'
+require 'ocular/inputs/cron_input.rb'
 
 class Ocular
     module Event
@@ -24,6 +25,7 @@ class Ocular
             include Ocular::DSL::Etcd
 
             include Ocular::Inputs::HTTP::DSL
+            include Ocular::Inputs::Cron::DSL
 
             def fork(value)
                 @do_fork = value

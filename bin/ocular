@@ -114,13 +114,18 @@ else
   if ARGV.length == 0
       puts "Missing script file to run, starting ocular interactive shell. use \"ocular -h\" to get full options"
       puts ""
-      longest_name = $dsl_help.keys.max_by(&:length).length
+      longest_name = [$dsl_help.keys.max_by(&:length).length, $dsl_event_help.keys.max_by(&:length).length].max
       $dsl_help.each do |cmd, help|
         spacing = " "*(longest_name.to_i+1-cmd.length)
         puts "  #{cmd}#{spacing}#{help}"
       end
       puts ""
-
+      puts "Event triggering functions:"
+      $dsl_event_help.each do |cmd, help|
+        spacing = " "*(longest_name.to_i+1-cmd.length)
+        puts "  #{cmd}#{spacing}#{help}"
+      end
+      puts ""
       ARGV.clear
       require 'irb'
       IRB.setup nil
@@ -144,7 +149,9 @@ else
       IRB.conf[:SAVE_HISTORY] = 1000
       IRB.conf[:HISTORY_FILE] = '~/.ocular_history'
 
-      context = Ocular::DSL::RunContext.new
+      ef = Ocular::Event::EventFactory.new
+
+      context = Ocular::DSL::REPLRunContext.new(ef.handlers)
 
       irb = IRB::Irb.new(IRB::WorkSpace.new(context))
       IRB.conf[:MAIN_CONTEXT] = irb.context

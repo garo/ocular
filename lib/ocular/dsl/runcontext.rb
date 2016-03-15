@@ -1,5 +1,6 @@
 
 require 'securerandom'
+require 'ocular/inputs/cron_input'
 
 class Ocular
     module DSL
@@ -14,6 +15,8 @@ class Ocular
             include Ocular::DSL::Fog
             include Ocular::DSL::Etcd
             include Ocular::DSL::Orbit
+
+            include Ocular::Inputs::Cron::DSL
 
             def initialize
                 @run_id = SecureRandom.uuid()
@@ -37,6 +40,19 @@ class Ocular
                 for i in @cleanups
                     i.call()
                 end
+            end
+        end
+
+        class REPLRunContext < RunContext
+            attr_reader :handlers
+            attr_reader :events
+            attr_reader :do_fork
+
+            def initialize(handlers)
+                super()
+                @events = {}
+                @handlers = handlers
+                @do_fork = false
             end
         end
     end
