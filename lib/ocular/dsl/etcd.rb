@@ -10,7 +10,7 @@ class Ocular
                 if @@__etcd_instance
                     return @@__etcd_instance
                 end
-                
+
                 settings = ::Ocular::Settings::get(:inputs)[:etcd] || {}
                 @@__etcd_instance = ::Etcd.client(
                     host: (settings[:host] || "localhost"),

@@ -29,7 +29,7 @@ RSpec.describe Ocular::DSL::Orbit do
         proxy = ef.load_from_block "test_dsl" do
             fork false
             onEvent "name" do
-                a = orbit.get_service_endpoints
+                a = orbit.get_service_endpoints("servicename")
             end                             
         end
         eventbase = proxy.events["onEvent"]["name"]
