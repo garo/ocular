@@ -6,6 +6,7 @@ class Ocular
         module Fog
             @@__aws_instance = nil
 
+            add_help "aws", "Returns Fog::Compute instance"
             def aws()
                 if @@__aws_instance
                     return @@__aws_instance
@@ -20,6 +21,7 @@ class Ocular
                 return @@__aws_instance
             end
 
+            add_help "autoscaling", "Returns Fog::AWS::AutoScaling instance"
             def autoscaling()
                 return ::Fog::AWS::AutoScaling.new({
                     :aws_access_key_id => ::Ocular::Settings::get(:aws)[:aws_access_key_id],
@@ -27,6 +29,8 @@ class Ocular
                     })
             end
 
+
+            add_help "find_servers_in_autoscaling_groups(substring)", "Returns instances in an autoscaling group which name matches substring"
             def find_servers_in_autoscaling_groups(substring)
                 instances = []
                 for group in autoscaling.groups

@@ -112,7 +112,14 @@ else
   # Start shell mode
 
   if ARGV.length == 0
-      puts "Missing script file to run, starting ocular interactive shell. use -h to get more info"
+      puts "Missing script file to run, starting ocular interactive shell. use \"orbit -h\" to get full options"
+      puts ""
+      longest_name = $dsl_help.keys.max_by(&:length).length
+      $dsl_help.each do |cmd, help|
+        spacing = " "*(longest_name.to_i+1-cmd.length)
+        puts "  #{cmd}#{spacing}#{help}"
+      end
+      puts ""
 
       ARGV.clear
       require 'irb'

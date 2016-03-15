@@ -6,6 +6,8 @@ class Ocular
         module Etcd
             @@__etcd_instance = nil
 
+            add_help "etcd", "Returns an etcd client instance"
+
             def etcd()
                 if @@__etcd_instance
                     return @@__etcd_instance

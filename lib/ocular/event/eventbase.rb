@@ -1,6 +1,4 @@
 require 'ocular/mixin/from_file'
-require 'ocular/dsl/fog'
-require 'ocular/dsl/ssh'
 require 'ocular/dsl/logging'
 
 class Ocular
