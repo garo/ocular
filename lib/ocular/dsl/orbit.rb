@@ -15,10 +15,15 @@ class Ocular
                 add_help "orbit::get_service_endpoints(service_name)", "Returns an array of ips running service_name"
                 def get_service_endpoints(service_name)
                     orbit_endpoints = []
-                    endpoints = @etcd.get("/orbit/services/#{service_name}/endpoints").node.children
-                    endpoints.each do |node|
-                      ip = node.key.match(/.*endpoints.(.+?):.+/).captures[0]
-                      orbit_endpoints << ip
+                    begin
+                        endpoints = @etcd.get("/orbit/services/#{service_name}/endpoints").node.children
+                        pp endpoints
+                        endpoints.each do |node|
+                          ip = node.key.match(/.*endpoints.(.+?):.+/).captures[0]
+                          orbit_endpoints << ip
+                        end
+                    rescue ::Etcd::KeyNotFound
+                        return []
                     end
 
                     return orbit_endpoints
