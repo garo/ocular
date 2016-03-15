@@ -69,7 +69,31 @@ end  # class OptparseExample
 
 options = OptparseExample.parse(ARGV)
 
-Ocular::Settings.load_from_file(Ocular::Settings.find_settings_file_from_system(options.settings))
+begin
+  Ocular::Settings.load_from_file(Ocular::Settings.find_settings_file_from_system(options.settings))
+rescue Errno::ENOENT
+  puts "Could not find #{options.settings} in any search path."
+  puts "Please create a yaml settings file in either ~/.ocular.yaml or /etc/ocular.yaml"
+  puts "Here's an example file:\n"
+  puts "
+aws:
+  aws_access_key_id: AKI...
+  aws_secret_access_key: ....
+ssh:
+  keys:
+  - /home/user/.ssh/id_dsa
+  user: ubuntu
+
+inputs:
+  http:
+    port: 8083
+  etcd:
+    host: etc
+    port: 4001
+
+"
+  exit -1
+end
 
 if options.server
   if !options.root && !Ocular::Settings.get(:script_root)
@@ -106,7 +130,7 @@ else
       IRB.conf[:PROMPT_MODE] = :MY_PROJECT
 
       IRB.conf[:RC] = false
-
+      IRB.conf[:AUTO_INDENT] = true
       require 'irb/completion'
       require 'irb/ext/save-history'
       IRB.conf[:READLINE] = true
