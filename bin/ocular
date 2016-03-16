@@ -95,6 +95,23 @@ inputs:
   exit -1
 end
 
+logger = Ocular::Logging::MultiLogger.new
+
+if Ocular::Settings.get(:loggers)
+  Ocular::Settings.get(:loggers).each do |name, settings|
+    name = name.to_s
+    if name == "console"
+      logger.add_logger(Ocular::Logging::ConsoleLogger.new(settings))
+    elsif name == "kafka"
+      logger.add_logger(Ocular::Logging::KafkaLogger.new(settings))
+    else
+      puts "Unknown logging engine #{name}"
+    end
+  end
+else 
+  logger.add_logger(Ocular::Logging::ConsoleLogger.new)
+end
+
 if options.server
   if !options.root && !Ocular::Settings.get(:script_root)
     puts "Please specify --root or set script_root in the settings.yaml"
@@ -151,7 +168,7 @@ else
 
       ef = Ocular::Event::EventFactory.new
 
-      context = Ocular::DSL::REPLRunContext.new(ef.handlers)
+      context = Ocular::DSL::REPLRunContext.new(ef.handlers, logger)
 
       irb = IRB::Irb.new(IRB::WorkSpace.new(context))
       IRB.conf[:MAIN_CONTEXT] = irb.context
@@ -174,7 +191,7 @@ else
   ef = Ocular::Event::EventFactory.new
   proxy = ef.load_from_file(ARGV.shift)
 
-  context = Ocular::DSL::RunContext.new
+  context = Ocular::DSL::RunContext.new(logger)
   eventbase = proxy.events["onEvent"]["cli"]
   eventbase.exec(context)
 

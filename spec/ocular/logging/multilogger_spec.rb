@@ -35,5 +35,32 @@ RSpec.describe Ocular::Logging::MultiLogger do
         expect(c.msg[0][1]).to eq("Hello, World!")
     end
 
+    it "will forward events to multiple loggers" do
+        a = ::Ocular::Logging::MultiLogger.new
+
+        class TestLogger
+            attr_accessor :msg
+            def initialize
+                @msg = []
+            end
+
+            def log_event(property, value, run_id = nil, &block)
+                @msg << [property, value, run_id]
+            end
+        end
+
+        b = TestLogger.new
+        c = TestLogger.new
+        a.add_logger(b)
+        a.add_logger(c)
+
+        a.log_event("foo", "bar")
+
+        expect(b.msg[0][0]).to eq("foo")
+        expect(b.msg[0][1]).to eq("bar")
+        expect(c.msg[0][0]).to eq("foo")
+        expect(c.msg[0][1]).to eq("bar")
+    end
+
 end
 

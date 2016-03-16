@@ -3,6 +3,8 @@
 class Ocular
     module Logging
         class MultiLogger
+            attr_reader :loggers
+
             def initialize
                 @loggers = []
             end
@@ -27,6 +29,12 @@ class Ocular
     
             end
 
+            def log_event(property, value, run_id = nil)
+                @loggers.each do |logger|
+                    logger.log_event(property, value, run_id)
+                end
+    
+            end
         end
     end
 end

@@ -48,8 +48,8 @@ class Ocular
             attr_reader :events
             attr_reader :do_fork
 
-            def initialize(handlers)
-                super()
+            def initialize(handlers, logger)
+                super(logger)
                 @events = {}
                 @handlers = handlers
                 @do_fork = false

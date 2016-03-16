@@ -1,13 +1,23 @@
+require "kafka"
 
 class Ocular
     module Logging
 
         # Most of the Logger class is copied from the Ruby Logger class source code.
-        class ConsoleLogger
+        class KafkaLogger
 
-            def initialize(settings=nil)
+            def initialize(settings=nil, kafka=nil)
                 @level = Severity::DEBUG
-                @formatter = Logger::Formatter.new
+                @formatter = Formatter.new
+
+                if kafka != nil
+                    @kafka = kafka
+                else
+                    @kafka = Kafka.new(settings)
+                end
+                @settings = settings
+
+                @producer = @kafka.producer
             end            
 
             def add(severity, message = nil, run_id = nil, &block)
@@ -24,18 +34,11 @@ class Ocular
                     end
                 end
     
-                puts format_message(format_severity(severity), Time.now, run_id, message)
-                true
+                @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
             end
 
-            SEV_LABEL = %w(DEBUG INFO WARN ERROR FATAL ANY).each(&:freeze).freeze
-
-            def format_severity(severity)
-                SEV_LABEL[severity] || 'ANY'
-            end            
-
-            def format_message(severity, datetime, progname, msg)
-                @formatter.call(severity, datetime, progname, msg)
+            def log_event(property, value, run_id = nil)
+                @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
             end
 
             # Default formatter for log messages.
@@ -48,9 +51,24 @@ class Ocular
                     @datetime_format = nil
                 end
 
-                def call(severity, time, progname, msg)
-                    Format % [severity[0..0], format_datetime(time), $$, severity, progname, msg2str(msg)]
+                def format_message(severity, time, progname, msg)
+                    data = {
+                        "level" => Ocular::Logging::Severity::LABELS[severity],
+                        "ts" => format_datetime(time),
+                        "run_id" => progname,
+                        "msg" => msg2str(msg)
+                    } 
+                    return data.to_json
                 end
+
+                def format_event(property, value, time, progname)
+                    data = {
+                        "ts" => format_datetime(time),
+                        "run_id" => progname,
+                    }
+                    data[property] = value
+                    return data.to_json
+                end                
 
             private
 

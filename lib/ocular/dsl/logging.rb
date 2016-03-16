@@ -25,6 +25,9 @@ class Ocular
                 @logger.add(::Ocular::Logging::Severity::FATAL, message, @run_id, &block)
             end
 
+            def log_event(property, value)
+                @logger.log_event(property, value, @run_id)
+            end
 
         end
     end

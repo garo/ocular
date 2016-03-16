@@ -4,6 +4,8 @@ class Ocular
     module Logging
         # Logging severity.
         module Severity
+            LABELS = %w(DEBUG INFO WARN ERROR FATAL ANY).each(&:freeze).freeze
+
             # Low-level information, mostly for developers.
             DEBUG = 0
             # Generic (useful) information about system operation.
