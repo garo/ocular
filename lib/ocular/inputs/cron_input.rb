@@ -17,7 +17,7 @@ class Ocular
                 add_event_help "cron.cron(rule)", "Schedule event with cron syntax. eg: '5 0 * * *'"
                 def cron()
                     handler = handlers.get(::Ocular::Inputs::Cron::Input)
-                    return Input::DSLProxy.new(self, handler)
+                    return Input::DSLProxy.new(self, handler, logger)
                 end
 
             end
@@ -43,9 +43,10 @@ class Ocular
                 end
 
                 class DSLProxy
-                    def initialize(proxy, handler)
+                    def initialize(proxy, handler, logger)
                         @proxy = proxy
                         @handler = handler
+                        @logger = logger
                     end
 
                     def in(rule, &block)
@@ -53,7 +54,7 @@ class Ocular
                         eventbase.proxy = @proxy
 
                         id = @handler.scheduler.in(rule) do
-                            context = ::Ocular::DSL::RunContext.new
+                            context = ::Ocular::DSL::RunContext.new(@logger)
                             eventbase.exec(context)
                         end
 
@@ -67,7 +68,7 @@ class Ocular
                         eventbase.proxy = @proxy
 
                         id = @handler.scheduler.at(rule) do
-                            context = ::Ocular::DSL::RunContext.new
+                            context = ::Ocular::DSL::RunContext.new(@logger)
                             eventbase.exec(context)
                         end
 
@@ -81,7 +82,7 @@ class Ocular
                         eventbase.proxy = @proxy
 
                         id = @handler.scheduler.every(rule) do
-                            context = ::Ocular::DSL::RunContext.new
+                            context = ::Ocular::DSL::RunContext.new(@logger)
                             eventbase.exec(context)
                         end
 
@@ -95,7 +96,7 @@ class Ocular
                         eventbase.proxy = @proxy
 
                         id = @handler.scheduler.cron(rule) do
-                            context = ::Ocular::DSL::RunContext.new
+                            context = ::Ocular::DSL::RunContext.new(@logger)
                             eventbase.exec(context)
                         end
 

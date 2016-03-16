@@ -43,7 +43,7 @@ class Ocular
                     attr_accessor :request, :response, :params, :env
 
                     def initialize()
-                        super()
+                        super(Ocular::Logging::ConsoleLogger.new) 
                         @headers = {}
                     end
 

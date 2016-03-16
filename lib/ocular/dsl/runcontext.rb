@@ -18,9 +18,9 @@ class Ocular
 
             include Ocular::Inputs::Cron::DSL
 
-            def initialize
+            def initialize(logger)
                 @run_id = SecureRandom.uuid()
-                @logger = Ocular::DSL::Logger.new
+                @logger = logger
                 @cleanups = []
             end
 

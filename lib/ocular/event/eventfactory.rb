@@ -7,13 +7,13 @@ class Ocular
     module Event
         class DefinitionProxy
             attr_accessor :events
-            attr_reader :script_name, :do_fork
+            attr_reader :script_name, :do_fork, :logger
             attr_accessor :handlers, :events
 
             def initialize(script_name, handlers)
                 @script_name = script_name
                 @events = {}
-                @logger = Ocular::DSL::Logger.new
+                @logger = Ocular::Logging::ConsoleLogger.new
                 @handlers = handlers
                 @do_fork = true
             end

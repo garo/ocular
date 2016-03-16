@@ -32,5 +32,6 @@ The goal is that a new script could be written really quickly to automate a prev
   s.add_runtime_dependency('faraday', '0.9.2')
   s.add_runtime_dependency('etcd', '0.3.0')
   s.add_runtime_dependency('rufus-scheduler', '3.2.0')
+  s.add_runtime_dependency('ruby-kafka', '0.3.2')
   s.add_development_dependency('rspec', '3.4.0')
 end

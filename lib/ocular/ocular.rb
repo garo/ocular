@@ -1,6 +1,7 @@
 
 require 'ocular/version'
 require 'ocular/settings'
+require 'ocular/logging/logging'
 require 'ocular/event/eventbase'
 require 'ocular/event/eventfactory'
 require 'ocular/dsl/dsl'

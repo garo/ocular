@@ -35,7 +35,7 @@ RSpec.describe Ocular::DSL::EventBase do
                 return "x"*65537
             end
             
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             ret = test.exec_fork(context)
 
             expect(ret.length).to eq(65537)

@@ -14,7 +14,7 @@ RSpec.describe Ocular::DSL::SSH do
         end
         eventbase = proxy.events[0]
 
-        context = Ocular::DSL::RunContext.new
+        context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
         eventbase.exec(context)
         expect(a).not_to eq(nil)
 

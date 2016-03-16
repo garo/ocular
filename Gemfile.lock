@@ -1,13 +1,14 @@
 PATH
   remote: .
   specs:
-    ocular (0.1.7)
+    ocular (0.1.8)
       etcd (= 0.3.0)
       faraday (= 0.9.2)
       fog (= 1.37.0)
       puma (= 2.16.0)
       rack (= 1.6.4)
       rack-protection (= 1.5.3)
+      ruby-kafka (= 0.3.2)
       rufus-scheduler (= 3.2.0)
       rye (= 0.9.13)
 
@@ -171,6 +172,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
+    ruby-kafka (0.3.2)
     rufus-scheduler (3.2.0)
     rye (0.9.13)
       annoy

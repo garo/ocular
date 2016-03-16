@@ -44,6 +44,18 @@ class Ocular
                 return instances
             end
 
+            add_help "find_server_by_ip", "Returns Fog::Compute::AWS::Server or nil"
+            def find_server_by_ip(ip)
+                ret = aws().servers.all("private-ip-address" => ip)
+                if ret.length > 1
+                    raise "Too many matching servers by just one ip #{ip}"
+                end
+                if ret.length == 0
+                    return nil
+                end
+                return ret.first
+            end
+
         end
 
     end

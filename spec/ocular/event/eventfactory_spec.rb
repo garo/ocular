@@ -20,7 +20,7 @@ RSpec.describe Ocular::Event::EventFactory do
             expect(proxy.script_name).to eq('dsl-example')
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             eventbase.exec(context)
         end
 
@@ -29,7 +29,7 @@ RSpec.describe Ocular::Event::EventFactory do
             proxy = ef.load_from_file('spec/data/dsl-top-level-method-working.rb')
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             eventbase.exec(context)
         end
 
@@ -38,7 +38,7 @@ RSpec.describe Ocular::Event::EventFactory do
             proxy = ef.load_from_file('spec/data/dsl-top-level-method-missing.rb')
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             expect {
                 eventbase.exec(context)
             }.to raise_error(NoMethodError)
@@ -60,7 +60,7 @@ RSpec.describe Ocular::Event::EventFactory do
             end
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             eventbase.exec(context)
             expect(a).to eq(true)
             expect($globalTestFuncTestStr).to eq("Hello")
@@ -78,7 +78,7 @@ RSpec.describe Ocular::Event::EventFactory do
             end
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             eventbase.exec(context)
             expect(a).to eq(true)
             expect($globalTestFuncTestStr).to eq("Hello")
@@ -100,7 +100,7 @@ RSpec.describe Ocular::Event::EventFactory do
             end
             eventbase = proxy.events["onEvent"][EventFactoryTestClass]
 
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             eventbase.exec(context)
             expect($uniquevariablenameineventfactoryspec).to eq("Hello")
         end
@@ -115,7 +115,7 @@ RSpec.describe Ocular::Event::EventFactory do
             end
             eventbase = proxy.events[0]
 
-            context = Ocular::DSL::RunContext.new
+            context = Ocular::DSL::RunContext.new(Ocular::Logging::ConsoleLogger.new)
             expect {
                 eventbase.exec(context)
             }.to raise_error(NoMethodError)
