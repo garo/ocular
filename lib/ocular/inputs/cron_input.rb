@@ -54,6 +54,7 @@ class Ocular
 
                         id = @handler.scheduler.in(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
+                            context.log_cause("cron.in", {:rule => rule})
                             eventbase.exec(context)
                         end
 
@@ -67,6 +68,7 @@ class Ocular
 
                         id = @handler.scheduler.at(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
+                            context.log_cause("cron.at", {:rule => rule})
                             eventbase.exec(context)
                         end
 
@@ -80,6 +82,7 @@ class Ocular
 
                         id = @handler.scheduler.every(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
+                            context.log_cause("cron.every", {:rule => rule})
                             eventbase.exec(context)
                         end
 
@@ -93,6 +96,7 @@ class Ocular
 
                         id = @handler.scheduler.cron(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
+                            context.log_cause("cron.cron", {:rule => rule})
                             eventbase.exec(context)
                         end
 

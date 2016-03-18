@@ -1,5 +1,6 @@
 require 'ocular/mixin/from_file'
 require 'ocular/dsl/logging'
+require 'time'
 
 class Ocular
     module DSL
@@ -19,11 +20,16 @@ class Ocular
             end
 
             def exec(context, do_fork = self.proxy.do_fork)
-                context.proxy = self.proxy
-                if do_fork
-                    return exec_fork(context)
-                else
-                    return exec_nofork(context)
+                start = Time.now
+                begin
+                    context.proxy = self.proxy
+                    if do_fork
+                        return exec_fork(context)
+                    else
+                        return exec_nofork(context)
+                    end
+                ensure
+                    context.log_timing("execution_time", Time.now)
                 end
             end
 

@@ -28,16 +28,27 @@ class Ocular
                 true
             end
 
-            def log_event(property, value, run_id = nil, &block)
-                puts @formatter.format_event(property, value, Time.now, message)
+            def log_event(property, value, run_id = nil)
+                puts @formatter.format_event(property, value, Time.now)
                 true
             end            
 
+            def log_cause(type, environment, run_id = nil)
+                puts @formatter.format_cause(type, environment, Time.now)
+                true
+            end
+
+            def log_timing(key, value, run_id = nil)
+                puts @formatter.format_timing(key, value, Time.now)
+                true
+            end            
 
             # Default formatter for log messages.
             class Formatter
                 Format = "%s, [%s#%d] -- %s: %s\n".freeze
                 EventFormat = "[%s#%d] -- %s: %s\n".freeze
+                CauseFormat = "[%s#%d] -- %s triggered processing with environment: %s\n".freeze
+                TimingFormat = "[%s#%d] -- %s took %s\n".freeze
 
                 attr_accessor :datetime_format
 
@@ -49,10 +60,17 @@ class Ocular
                     Format % [Ocular::Logging::Severity::LABELS[severity], format_datetime(time), $$, severity, msg2str(msg)]
                 end
 
-                def format_event(property, value, run_time)
+                def format_event(property, value, time)
                     EventFormat % [format_datetime(time), $$, property, value]
-
                 end
+
+                def format_cause(type, environment, time)
+                    CauseFormat % [format_datetime(time), $$, type, environment.to_json]
+                end
+
+                def format_timing(key, value, time)
+                    TimingFormat % [format_datetime(time), $$, key, value]
+                end                
 
             private
 

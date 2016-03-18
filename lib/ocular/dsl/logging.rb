@@ -29,6 +29,16 @@ class Ocular
                 @logger.log_event(property, value, @run_id)
             end
 
+            def log_cause(type, environment)
+                @logger.log_cause(type, environment, @run_id)
+            end
+
+            def log_timing(name, value)
+                if value.is_a? Time
+                    value = Time.now - value
+                end
+                @logger.log_timing(name, value, @run_id)
+            end
         end
     end
 end

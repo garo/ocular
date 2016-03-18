@@ -1,4 +1,5 @@
 
+require 'pp'
 
 class Ocular
     module Logging
@@ -33,8 +34,19 @@ class Ocular
                 @loggers.each do |logger|
                     logger.log_event(property, value, run_id)
                 end
-    
             end
+
+            def log_cause(type, environment)
+                @loggers.each do |logger|
+                    logger.log_cause(type, environment, run_id)
+                end
+            end
+
+            def log_timing(key, value)
+                @loggers.each do |logger|
+                    logger.log_timing(key, value, run_id)
+                end
+            end        
         end
     end
 end

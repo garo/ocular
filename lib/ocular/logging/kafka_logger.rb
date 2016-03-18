@@ -41,6 +41,14 @@ class Ocular
                 @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
             end
 
+            def log_cause(type, environment, run_id = nil)
+                @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+            end
+
+            def log_timing(key, value, run_id = nil)
+                @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+            end
+
             # Default formatter for log messages.
             class Formatter
                 Format = "%s, [%s#%d] %5s -- %s: %s\n".freeze
@@ -69,6 +77,17 @@ class Ocular
                     data[property] = value
                     return data.to_json
                 end                
+
+                def format_cause(type, environment, time, progname)
+                    data = {
+                        "ts" => format_datetime(time),
+                        "run_id" => progname,
+                        "triggered_by" => type,
+                        "environment" => environment
+                    }
+
+                    return data.to_json
+                end
 
             private
 

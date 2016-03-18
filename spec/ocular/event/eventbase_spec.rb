@@ -14,13 +14,19 @@ RSpec.describe Ocular::DSL::EventBase do
             class TestRunContext
                 attr_accessor :variable
                 attr_accessor :proxy
+                attr_accessor :timing
 
                 def initialize
                     @variable = false
+                    @timing = []
                 end
 
                 def setVariable(val)
                     @variable = val
+                end
+
+                def log_timing(key, value)
+                    timing << [key, value]
                 end
             end
 
@@ -28,6 +34,7 @@ RSpec.describe Ocular::DSL::EventBase do
 
             test.exec(context, do_fork=false)
             expect(context.variable).to eq(true)
+            expect(context.timing[0][0]).to eq("execution_time")
             expect(a).to eq(true)
         end
 
