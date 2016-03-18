@@ -30,19 +30,19 @@ class Ocular
     
             end
 
-            def log_event(property, value, run_id = nil)
+            def log_event(property, value)
                 @loggers.each do |logger|
                     logger.log_event(property, value, run_id)
                 end
             end
 
-            def log_cause(type, environment)
+            def log_cause(type, environment, run_id)
                 @loggers.each do |logger|
                     logger.log_cause(type, environment, run_id)
                 end
             end
 
-            def log_timing(key, value)
+            def log_timing(key, value, run_id)
                 @loggers.each do |logger|
                     logger.log_timing(key, value, run_id)
                 end

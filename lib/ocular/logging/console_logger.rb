@@ -45,10 +45,10 @@ class Ocular
 
             # Default formatter for log messages.
             class Formatter
-                Format = "%s, [%s#%d] -- %s: %s\n".freeze
+                Format = "[%s#%d] %s -- %s\n".freeze
                 EventFormat = "[%s#%d] -- %s: %s\n".freeze
                 CauseFormat = "[%s#%d] -- %s triggered processing with environment: %s\n".freeze
-                TimingFormat = "[%s#%d] -- %s took %s\n".freeze
+                TimingFormat = "[%s#%d] -- %s took %s ms\n".freeze
 
                 attr_accessor :datetime_format
 
@@ -57,7 +57,7 @@ class Ocular
                 end
 
                 def format_message(severity, time, msg)
-                    Format % [Ocular::Logging::Severity::LABELS[severity], format_datetime(time), $$, severity, msg2str(msg)]
+                    Format % [format_datetime(time), $$, Ocular::Logging::Severity::LABELS[severity], msg2str(msg)]
                 end
 
                 def format_event(property, value, time)

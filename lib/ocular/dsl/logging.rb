@@ -35,7 +35,7 @@ class Ocular
 
             def log_timing(name, value)
                 if value.is_a? Time
-                    value = Time.now - value
+                    value = (Time.now - value) * 1000 # report in milliseconds
                 end
                 @logger.log_timing(name, value, @run_id)
             end

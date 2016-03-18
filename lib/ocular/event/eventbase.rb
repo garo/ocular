@@ -29,7 +29,7 @@ class Ocular
                         return exec_nofork(context)
                     end
                 ensure
-                    context.log_timing("execution_time", Time.now)
+                    context.log_timing("execution_time", start)
                 end
             end
 
