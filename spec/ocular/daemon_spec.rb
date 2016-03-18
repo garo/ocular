@@ -46,7 +46,18 @@ RSpec.describe Ocular::Daemon do
         expect(response.body).to eq("route called")
 
         daemon.stop_input_handlers()
+    end
 
+    it "can handle syntax errors in script files" do
+        Ocular::Settings.load_from_file("spec/data/settings.yaml")
+
+        daemon = ::Ocular::Daemon.new('spec/data/daemon_invalid_test_scripts')
+        begin
+            daemon.load_script_files()
+            expect(false).to eq(true)
+        rescue NameError => e
+
+        end
     end
 
 end

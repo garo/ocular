@@ -23,6 +23,7 @@ class OptparseExample
     options.server = false
     options.settings = nil
     options.root = nil
+    options.check = nil
 
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage in shell mode: \"ocular [options] <script file>\" or server mode: \"ocular --server [options]\""
@@ -57,6 +58,10 @@ class OptparseExample
 
       opts.on("--settings FILE", "Full path and file name to the settings yaml file.") do |path|
         options.settings = path
+      end
+
+      opts.on("--check", "Do only syntax check") do
+        options.check = true
       end
 
     end
@@ -112,7 +117,7 @@ else
   logger.add_logger(Ocular::Logging::ConsoleLogger.new)
 end
 
-if options.server
+if options.server or options.syntax
   if !options.root && !Ocular::Settings.get(:script_root)
     puts "Please specify --root or set script_root in the settings.yaml"
     exit
@@ -120,6 +125,11 @@ if options.server
 
   daemon = Ocular::Daemon.new(options.root || Ocular::Settings.get(:script_root))
   daemon.load_script_files()
+
+  if options.syntax
+    exit 0
+  end
+
   daemon.start_input_handlers()
 
   puts "server started"
