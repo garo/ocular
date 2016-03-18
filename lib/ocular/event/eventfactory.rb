@@ -32,8 +32,7 @@ class Ocular
             end
 
             def onEvent(type, &block)
-                eventbase = Ocular::DSL::EventBase.new(&block)
-                eventbase.proxy = self
+                eventbase = Ocular::DSL::EventBase.new(self, &block)
                 (@events["onEvent"] ||= {})[type] = eventbase
             end
         end

@@ -268,8 +268,7 @@ class Ocular
                 end
 
                 def route(verb, path, options, proxy, &block)
-                    eventbase = Ocular::DSL::EventBase.new(&block)
-                    eventbase.proxy = proxy
+                    eventbase = Ocular::DSL::EventBase.new(proxy, &block)
                     (proxy.events[verb] ||= {})[path] = eventbase
 
                     pattern, keys = compile(path)

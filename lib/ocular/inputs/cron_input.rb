@@ -50,8 +50,7 @@ class Ocular
                     end
 
                     def in(rule, &block)
-                        eventbase = Ocular::DSL::EventBase.new(&block)
-                        eventbase.proxy = @proxy
+                        eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
 
                         id = @handler.scheduler.in(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
@@ -64,8 +63,7 @@ class Ocular
                     end
 
                     def at(rule, &block)
-                        eventbase = Ocular::DSL::EventBase.new(&block)
-                        eventbase.proxy = @proxy
+                        eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
 
                         id = @handler.scheduler.at(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
@@ -78,8 +76,7 @@ class Ocular
                     end
 
                     def every(rule, &block)
-                        eventbase = Ocular::DSL::EventBase.new(&block)
-                        eventbase.proxy = @proxy
+                        eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
 
                         id = @handler.scheduler.every(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
@@ -92,8 +89,7 @@ class Ocular
                     end
 
                     def cron(rule, &block)
-                        eventbase = Ocular::DSL::EventBase.new(&block)
-                        eventbase.proxy = @proxy
+                        eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
 
                         id = @handler.scheduler.cron(rule) do
                             context = ::Ocular::DSL::RunContext.new(@logger)

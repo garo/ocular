@@ -13,8 +13,9 @@ class Ocular
 
             attr_accessor :proxy
 
-            def initialize(&block)
+            def initialize(proxy, &block)
                 @callback = block
+                @proxy = proxy
             end
 
             def exec(context, do_fork = self.proxy.do_fork)

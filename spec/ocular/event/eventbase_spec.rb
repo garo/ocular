@@ -5,7 +5,8 @@ RSpec.describe Ocular::DSL::EventBase do
     describe "#exec" do
         it "can call a block with run_context" do
             a = false
-            test = Ocular::DSL::EventBase.new do
+            proxy = {}
+            test = Ocular::DSL::EventBase.new(proxy) do
                 a = true
                 setVariable(true)
             end
@@ -31,7 +32,8 @@ RSpec.describe Ocular::DSL::EventBase do
         end
 
         it "can return big amounts of data from forked exec" do
-            test = Ocular::DSL::EventBase.new do
+            proxy = {}
+            test = Ocular::DSL::EventBase.new(proxy) do
                 return "x"*65537
             end
             
