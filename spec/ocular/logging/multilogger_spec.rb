@@ -54,7 +54,7 @@ RSpec.describe Ocular::Logging::MultiLogger do
         a.add_logger(b)
         a.add_logger(c)
 
-        a.log_event("foo", "bar")
+        a.log_event("foo", "bar", "run_id")
 
         expect(b.msg[0][0]).to eq("foo")
         expect(b.msg[0][1]).to eq("bar")

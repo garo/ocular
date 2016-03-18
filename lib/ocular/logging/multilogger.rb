@@ -30,7 +30,7 @@ class Ocular
     
             end
 
-            def log_event(property, value)
+            def log_event(property, value, run_id)
                 @loggers.each do |logger|
                     logger.log_event(property, value, run_id)
                 end

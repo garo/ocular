@@ -274,8 +274,19 @@ class Ocular
                     pattern, keys = compile(path)
 
                     (@routes[verb] ||= []) << build_signature(pattern, keys) do |context|
-                        context.event_signature = [verb, path] 
-                        eventbase.exec(context)
+                        context.event_signature = [verb, path]
+                        response = eventbase.exec(context)
+                        environment = {
+                            :path => path,
+                            :options => options,
+                            :request => context.request,
+                            :params => context.params,
+                            :env => context.env,
+                            :response => response
+                        }
+                        context.log_cause("on#{verb}", environment)
+
+                        response
                     end
                 end
 

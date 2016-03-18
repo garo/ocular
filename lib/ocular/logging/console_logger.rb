@@ -6,7 +6,7 @@ class Ocular
         class ConsoleLogger
 
             def initialize(settings=nil)
-                @level = Severity::DEBUG
+                @level = Severity::INFO
                 @formatter = Formatter.new
             end            
 
@@ -34,7 +34,9 @@ class Ocular
             end            
 
             def log_cause(type, environment, run_id = nil)
-                puts @formatter.format_cause(type, environment, Time.now)
+                if @level == Severity::DEBUG
+                    puts @formatter.format_cause(type, environment, Time.now)
+                end
                 true
             end
 
