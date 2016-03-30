@@ -13,7 +13,7 @@ class Ocular
                 if kafka != nil
                     @kafka = kafka
                 else
-                    @kafka = Kafka.new(settings)
+                    @kafka = Kafka.new(settings[:client])
                 end
                 @settings = settings
 
@@ -35,18 +35,22 @@ class Ocular
                 end
     
                 @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
+                @producer.deliver_messages
             end
 
             def log_event(property, value, run_id = nil)
                 @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                @producer.deliver_messages
             end
 
             def log_cause(type, environment, run_id = nil)
                 @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                @producer.deliver_messages
             end
 
             def log_timing(key, value, run_id = nil)
                 @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                @producer.deliver_messages
             end
 
             # Default formatter for log messages.

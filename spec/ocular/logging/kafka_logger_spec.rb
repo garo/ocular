@@ -11,6 +11,9 @@ RSpec.describe Ocular::Logging::KafkaLogger do
         def produce(msg, topic:, partition: nil, partition_key: nil)
             @messages << [msg, topic]
         end
+        def deliver_messages
+
+        end
     end
 
     class TestKafka
