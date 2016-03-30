@@ -66,7 +66,7 @@ class Ocular
                 def format_message(severity, time, progname, msg)
                     data = {
                         "level" => Ocular::Logging::Severity::LABELS[severity],
-                        "ts" => format_datetime(time),
+                        "@timestamp" => format_datetime(time),
                         "run_id" => progname,
                         "msg" => msg2str(msg)
                     } 
@@ -75,7 +75,7 @@ class Ocular
 
                 def format_event(property, value, time, progname)
                     data = {
-                        "ts" => format_datetime(time),
+                        "@timestamp" => format_datetime(time),
                         "run_id" => progname,
                     }
                     data[property] = value
@@ -84,7 +84,7 @@ class Ocular
 
                 def format_cause(type, environment, time, progname)
                     data = {
-                        "ts" => format_datetime(time),
+                        "@timestamp" => format_datetime(time),
                         "run_id" => progname,
                         "triggered_by" => type,
                         "environment" => environment
