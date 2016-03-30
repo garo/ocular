@@ -1,4 +1,3 @@
-require 'logger'
 
 class Ocular
     module Logging

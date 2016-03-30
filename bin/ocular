@@ -24,6 +24,7 @@ class OptparseExample
     options.settings = nil
     options.root = nil
     options.check = nil
+    options.level = "DEBUG"
 
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage in shell mode: \"ocular [options] <script file>\" or server mode: \"ocular --server [options]\""
@@ -62,6 +63,10 @@ class OptparseExample
 
       opts.on("--check", "Do only syntax check") do
         options.check = true
+      end
+
+      opts.on("--level LEVEL", "Log level") do |level|
+        options.level = level
       end
 
     end
@@ -106,7 +111,10 @@ if Ocular::Settings.get(:loggers)
   Ocular::Settings.get(:loggers).each do |name, settings|
     name = name.to_s
     if name == "console"
-      logger.add_logger(Ocular::Logging::ConsoleLogger.new(settings))
+      console_logger = Ocular::Logging::ConsoleLogger.new(settings)
+      console_logger.set_level(options.level)
+      logger.add_logger(console_logger)
+
     elsif name == "kafka"
       logger.add_logger(Ocular::Logging::KafkaLogger.new(settings))
     else
@@ -116,6 +124,8 @@ if Ocular::Settings.get(:loggers)
 else 
   logger.add_logger(Ocular::Logging::ConsoleLogger.new)
 end
+
+Ocular.set_global_logger(logger)
 
 if options.server or options.syntax
   if !options.root && !Ocular::Settings.get(:script_root)
@@ -132,7 +142,7 @@ if options.server or options.syntax
 
   daemon.start_input_handlers()
 
-  puts "server started"
+  Ocular.logger.info "server started"
   daemon.wait()
 
 else

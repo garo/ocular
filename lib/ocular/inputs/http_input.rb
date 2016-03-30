@@ -531,6 +531,7 @@ class Ocular
                     if @settings[:verbose]
                       @app = Rack::CommonLogger.new(@app, STDOUT)
                     end
+                    ::Ocular.logger.debug "Puma HTTP server started with settings #{@settings}"
 
                     @thread = Thread.new do
                         events_hander = @settings[:silent] ? ::Puma::Events.strings : ::Puma::Events.stdio

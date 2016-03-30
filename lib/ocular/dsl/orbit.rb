@@ -17,7 +17,6 @@ class Ocular
                     orbit_endpoints = []
                     begin
                         endpoints = @etcd.get("/orbit/services/#{service_name}/endpoints").node.children
-                        pp endpoints
                         endpoints.each do |node|
                           ip = node.key.match(/.*endpoints.(.+?):.+/).captures[0]
                           orbit_endpoints << ip

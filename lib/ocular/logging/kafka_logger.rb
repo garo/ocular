@@ -1,4 +1,5 @@
 require "kafka"
+require "socket"
 
 class Ocular
     module Logging
@@ -19,6 +20,27 @@ class Ocular
 
                 @producer = @kafka.producer
             end            
+
+            def debug(message = nil, &block)
+                add(Severity::DEBUG, message, @run_id, &block)
+            end
+            alias log debug
+
+            def info(message = nil, &block)
+                add(Severity::INFO, message, @run_id, &block)
+            end
+
+            def warn(message = nil, &block)
+                add(Severity::WARN, message, @run_id, &block)
+            end
+
+            def error(message = nil, &block)
+                add(Severity::ERROR, message, @run_id, &block)
+            end
+
+            def fatal(message = nil, &block)
+                add(Severity::FATAL, message, @run_id, &block)
+            end
 
             def add(severity, message = nil, run_id = nil, &block)
                 severity ||= Severity::UNKNOWN
@@ -68,7 +90,8 @@ class Ocular
                         "level" => Ocular::Logging::Severity::LABELS[severity],
                         "@timestamp" => format_datetime(time),
                         "run_id" => progname,
-                        "msg" => msg2str(msg)
+                        "msg" => msg2str(msg),
+                        "host" => hostname
                     } 
                     return data.to_json
                 end
@@ -77,6 +100,7 @@ class Ocular
                     data = {
                         "@timestamp" => format_datetime(time),
                         "run_id" => progname,
+                        "host" => hostname
                     }
                     data[property] = value
                     return data.to_json
@@ -87,7 +111,8 @@ class Ocular
                         "@timestamp" => format_datetime(time),
                         "run_id" => progname,
                         "triggered_by" => type,
-                        "environment" => environment
+                        "environment" => environment,
+                        "host" => hostname
                     }
 
                     return data.to_json
@@ -109,6 +134,13 @@ class Ocular
                     else
                         msg.inspect
                     end
+                end
+
+                def hostname
+                    if !@hostname
+                        @hostname = Socket.gethostname
+                    end
+                    return @hostname
                 end
             end
         end

@@ -14,6 +14,27 @@ class Ocular
                 @loggers << logger
             end
 
+            def debug(message = nil, &block)
+                add(Severity::DEBUG, message, @run_id, &block)
+            end
+            alias log debug
+
+            def info(message = nil, &block)
+                add(Severity::INFO, message, @run_id, &block)
+            end
+
+            def warn(message = nil, &block)
+                add(Severity::WARN, message, @run_id, &block)
+            end
+
+            def error(message = nil, &block)
+                add(Severity::ERROR, message, @run_id, &block)
+            end
+
+            def fatal(message = nil, &block)
+                add(Severity::FATAL, message, @run_id, &block)
+            end
+
             def add(severity, message = nil, run_id = nil, &block)
 
                 if message.nil?

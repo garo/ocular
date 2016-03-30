@@ -1,3 +1,4 @@
+require 'ocular/logging/severity.rb'
 
 class Ocular
     module Logging
@@ -8,7 +9,37 @@ class Ocular
             def initialize(settings=nil)
                 @level = Severity::INFO
                 @formatter = Formatter.new
-            end            
+            end
+
+            def set_level(level)
+                l = Severity::LABELS.index(level)
+                if l == nil
+                    puts "Invalid debug level #{level}. Supported levels: #{Severity::LABELS}"
+                    l = 0
+                end
+                @level = l
+            end
+
+            def debug(message = nil, &block)
+                add(Severity::DEBUG, message, @run_id, &block)
+            end
+            alias log debug
+
+            def info(message = nil, &block)
+                add(Severity::INFO, message, @run_id, &block)
+            end
+
+            def warn(message = nil, &block)
+                add(Severity::WARN, message, @run_id, &block)
+            end
+
+            def error(message = nil, &block)
+                add(Severity::ERROR, message, @run_id, &block)
+            end
+
+            def fatal(message = nil, &block)
+                add(Severity::FATAL, message, @run_id, &block)
+            end        
 
             def add(severity, message = nil, run_id = nil, &block)
                 severity ||= Severity::UNKNOWN
