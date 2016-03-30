@@ -48,25 +48,28 @@ class Ocular
                 @loggers.each do |logger|
                     logger.add(severity, message, run_id)
                 end
-    
+                true
             end
 
             def log_event(property, value, run_id)
                 @loggers.each do |logger|
                     logger.log_event(property, value, run_id)
                 end
+                true
             end
 
             def log_cause(type, environment, run_id)
                 @loggers.each do |logger|
                     logger.log_cause(type, environment, run_id)
                 end
+                true
             end
 
             def log_timing(key, value, run_id)
                 @loggers.each do |logger|
                     logger.log_timing(key, value, run_id)
                 end
+                true
             end        
         end
     end

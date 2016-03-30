@@ -14,7 +14,7 @@ class Ocular
             def initialize(script_name, handlers)
                 @script_name = script_name
                 @events = {}
-                @logger = Ocular::Logging::ConsoleLogger.new
+                @logger = ::Ocular.logger
                 @handlers = handlers
                 @do_fork = true
             end

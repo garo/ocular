@@ -55,7 +55,7 @@ class Ocular
                         message = progname
                     end
                 end
-    
+
                 @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
                 @producer.deliver_messages
             end
@@ -92,7 +92,7 @@ class Ocular
                         "run_id" => progname,
                         "msg" => msg2str(msg),
                         "host" => hostname
-                    } 
+                    }
                     return data.to_json
                 end
 

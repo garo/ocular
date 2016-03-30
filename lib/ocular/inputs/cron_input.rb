@@ -31,7 +31,7 @@ class Ocular
                     settings = settings_factory[:http]
 
                     @scheduler = ::Rufus::Scheduler.new
-
+                    ::Ocular.logger.debug "Starting Rufus cron scheduler"
                 end
 
                 def start()
@@ -51,8 +51,9 @@ class Ocular
 
                     def in(rule, &block)
                         eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
+                        ::Ocular.logger.debug "Scheduling cron.in(#{rule}) for block #{block}"
 
-                        id = @handler.scheduler.in(rule) do
+                        id = @handler.scheduler.in(rule, :overlap => false) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
                             context.log_cause("cron.in", {:rule => rule})
                             eventbase.exec(context)
@@ -65,8 +66,9 @@ class Ocular
 
                     def at(rule, &block)
                         eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
+                        ::Ocular.logger.debug "Scheduling cron.at(#{rule}) for block #{block}"
 
-                        id = @handler.scheduler.at(rule) do
+                        id = @handler.scheduler.at(rule, :overlap => false) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
                             context.log_cause("cron.at", {:rule => rule})
                             eventbase.exec(context)
@@ -79,8 +81,10 @@ class Ocular
 
                     def every(rule, &block)
                         eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
+                        ::Ocular.logger.debug "Scheduling cron.every(#{rule}) for block #{block}"
 
-                        id = @handler.scheduler.every(rule) do
+                        id = @handler.scheduler.every(rule, :overlap => false) do
+                            puts "derp!"
                             context = ::Ocular::DSL::RunContext.new(@logger)
                             context.log_cause("cron.every", {:rule => rule})
                             eventbase.exec(context)
@@ -93,8 +97,9 @@ class Ocular
 
                     def cron(rule, &block)
                         eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
+                        ::Ocular.logger.debug "Scheduling cron.cron(#{rule}) for block #{block}"
 
-                        id = @handler.scheduler.cron(rule) do
+                        id = @handler.scheduler.cron(rule, :overlap => false) do
                             context = ::Ocular::DSL::RunContext.new(@logger)
                             context.log_cause("cron.cron", {:rule => rule})
                             eventbase.exec(context)
