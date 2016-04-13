@@ -7,7 +7,7 @@ RSpec.describe Ocular::DSL::Etcd do
         ::Ocular::Settings.load_from_file('spec/data/settings.yaml')
 
         ef = Ocular::Event::EventFactory.new
-        a = nil
+        a = "nan"
         proxy = ef.load_from_block "test_dsl" do
             fork false
             onEvent "name" do

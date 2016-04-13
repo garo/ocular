@@ -84,7 +84,6 @@ class Ocular
                         ::Ocular.logger.debug "Scheduling cron.every(#{rule}) for block #{block}"
 
                         id = @handler.scheduler.every(rule, :overlap => false) do
-                            puts "derp!"
                             context = ::Ocular::DSL::RunContext.new(@logger)
                             context.log_cause("cron.every", {:rule => rule})
                             eventbase.exec(context)

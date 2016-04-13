@@ -24,7 +24,7 @@ class OptparseExample
     options.settings = nil
     options.root = nil
     options.check = nil
-    options.level = "DEBUG"
+    options.level = "INFO"
 
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage in shell mode: \"ocular [options] <script file>\" or server mode: \"ocular --server [options]\""
@@ -78,9 +78,10 @@ class OptparseExample
 end  # class OptparseExample
 
 options = OptparseExample.parse(ARGV)
-
+settings_file = nil
 begin
-  Ocular::Settings.load_from_file(Ocular::Settings.find_settings_file_from_system(options.settings))
+  settings_file = Ocular::Settings.find_settings_file_from_system(options.settings)
+  Ocular::Settings.load_from_file(settings_file)
 rescue Errno::ENOENT
   puts "Could not find #{options.settings} in any search path."
   puts "Please create a yaml settings file in either ~/.ocular.yaml or /etc/ocular.yaml"
@@ -126,6 +127,8 @@ else
 end
 
 Ocular.set_global_logger(logger)
+
+logger.debug("- Loaded ocular settings from #{settings_file}")
 
 if options.server or options.syntax
   if !options.root && !Ocular::Settings.get(:script_root)

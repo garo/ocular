@@ -13,12 +13,17 @@ class Ocular
                     return @@__etcd_instance
                 end
 
-                settings = ::Ocular::Settings::get(:inputs)[:etcd] || {}
+
+                datasources = ::Ocular::Settings::get(:datasources)
+                if !datasources
+                    raise "No etcd client settings"
+                end
+                settings = datasources[:etcd] || {}
                 @@__etcd_instance = ::Etcd.client(
                     host: (settings[:host] || "localhost"),
                     port: (settings[:port] || 2379),
-                    usern_name: (settings[:port] || nil),
-                    password: (settings[:port] || nil),
+                    user_name: (settings[:user_name] || nil),
+                    password: (settings[:password] || nil),
                     )
 
                 return @@__etcd_instance

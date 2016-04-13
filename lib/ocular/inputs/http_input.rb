@@ -268,6 +268,8 @@ class Ocular
                 end
 
                 def route(verb, path, options, proxy, &block)
+                    ::Ocular.logger.debug("Binding #{verb} #{path} to block #{block}")
+
                     eventbase = Ocular::DSL::EventBase.new(proxy, &block)
                     (proxy.events[verb] ||= {})[path] = eventbase
 

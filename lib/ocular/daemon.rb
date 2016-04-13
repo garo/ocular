@@ -37,6 +37,7 @@ class Ocular
         end
 
         def start_input_handlers()
+            puts "derp"
             @eventfactory.start_input_handlers()
         end
 

@@ -4,6 +4,12 @@ aws:
   aws_access_key_id: asdf
   aws_secret_access_key: asdf
 
+datasources:
+  etcd:
+    host: localhost
+    port: 2379
+
 inputs:
   http:
     port: 8082
+

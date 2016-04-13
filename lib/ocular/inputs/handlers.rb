@@ -18,7 +18,9 @@ class Ocular
             end
 
             def start()
+                puts "Starting handlers..."
                 @handlers.each do |name, handler|
+                    puts "Staring handler #{name} with #{handler}"
                     handler.start()
                 end
             end
