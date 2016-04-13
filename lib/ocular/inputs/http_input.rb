@@ -371,6 +371,17 @@ class Ocular
                     end
                 end
 
+                def encoded(char)
+                    enc = URI_INSTANCE.escape(char)
+                    enc = "(?:#{escaped(char, enc).join('|')})" if enc == char
+                    enc = "(?:#{enc}|#{encoded('+')})" if char == " "
+                    enc
+                end
+
+                def escaped(char, enc = URI_INSTANCE.escape(char))
+                    [Regexp.escape(enc), URI_INSTANCE.escape(char, /./)]
+                end
+
                 def call(env)
                     dup.call!(env)
                 end
