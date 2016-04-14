@@ -95,12 +95,20 @@ ssh:
   - /home/user/.ssh/id_dsa
   user: ubuntu
 
-inputs:
-  http:
-    port: 8083
+datasources:
   etcd:
     host: etc
     port: 4001
+  mysql:
+    host: localhost
+    password: xyz
+    username: ocular
+    database: ocular
+
+inputs:
+  http:
+    port: 8083
+
 
 "
   exit -1
