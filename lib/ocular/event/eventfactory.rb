@@ -3,6 +3,7 @@ require 'ocular/event/eventbase.rb'
 require 'ocular/inputs/http_input.rb'
 require 'ocular/inputs/cron_input.rb'
 require 'ocular/inputs/trigger_input.rb'
+require 'ocular/inputs/rabbitmq_input.rb'
 
 class Ocular
     module Event
@@ -25,11 +26,13 @@ class Ocular
             include Ocular::DSL::Fog
             include Ocular::DSL::Etcd
             include Ocular::DSL::MySQL
+            include Ocular::DSL::RabbitMQ
 
             include Ocular::Inputs::HTTP::DSL
             include Ocular::Inputs::HTTP::ErrorDSL
             include Ocular::Inputs::Cron::DSL
             include Ocular::Inputs::Trigger::DSL
+            include Ocular::Inputs::RabbitMQ::DSL
 
             def fork(value)
                 @do_fork = value

@@ -24,6 +24,7 @@ require 'ocular/dsl/runcontext'
 require 'ocular/inputs/handlers'
 require 'ocular/inputs/base'
 require 'ocular/inputs/http_input'
+require 'ocular/inputs/rabbitmq_input'
 require 'ocular/daemon'
 
 

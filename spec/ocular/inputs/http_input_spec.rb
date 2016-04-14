@@ -212,7 +212,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
             input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
             routes = input.routes
-            expect(routes["DELETE"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
+            expect(routes["OPTIONS"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
         end        
 
         it "#onGET will register route into DefinitionProxy for tracking" do

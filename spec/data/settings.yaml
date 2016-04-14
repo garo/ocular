@@ -11,8 +11,12 @@ datasources:
   mysql:
     host: localhost
     username: ocular
+  rabbitmq:
+    url:
+
 
 inputs:
   http:
     port: 8082
+
 
