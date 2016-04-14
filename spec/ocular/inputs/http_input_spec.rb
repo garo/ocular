@@ -200,6 +200,21 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             expect(routes["POST"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
         end
 
+        it "#onOPTIONS can be used to define a route" do
+            a = nil
+            ef = Ocular::Event::EventFactory.new
+            proxy = ef.load_from_block "test_dsl" do
+                onOPTIONS "/newroute" do
+                    @headers["Foo"] = "Bar"
+                    ""
+                end
+            end
+
+            input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
+            routes = input.routes
+            expect(routes["DELETE"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
+        end        
+
         it "#onGET will register route into DefinitionProxy for tracking" do
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_block "test_dsl" do

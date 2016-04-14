@@ -32,6 +32,12 @@ class Ocular
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
                     handler.add_delete(script_name, path, opts, self, &block)
                 end
+
+                def onOPTIONS(path, opts = {}, &block)
+                    handler = handlers.get(::Ocular::Inputs::HTTP::Input)
+                    handler.add_options(script_name, path, opts, self, &block)
+                end
+
             end
 
             module ErrorDSL
@@ -282,7 +288,12 @@ class Ocular
                 def add_delete(script_name, path, options, proxy, &block)
                     name = generate_uri_from_names(script_name, path)
                     route('DELETE', name, options, proxy, &block)
-                end                
+                end
+
+                def add_options(script_name, path, options, proxy, &block)
+                    name = generate_uri_from_names(script_name, path)
+                    route('OPTIONS', name, options, proxy, &block)
+                end
 
                 def build_signature(pattern, keys, &block)
                     return [pattern, keys, block]
