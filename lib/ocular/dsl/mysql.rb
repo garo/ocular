@@ -18,6 +18,7 @@ class Ocular
                     port: (settings[:port] || 3306),
                     username: (settings[:username] || nil),
                     password: (settings[:password] || nil),
+                    database: (settings[:database] || "ocular")
                     )
             end
 

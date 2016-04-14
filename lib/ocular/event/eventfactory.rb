@@ -27,6 +27,7 @@ class Ocular
             include Ocular::DSL::MySQL
 
             include Ocular::Inputs::HTTP::DSL
+            include Ocular::Inputs::HTTP::ErrorDSL
             include Ocular::Inputs::Cron::DSL
             include Ocular::Inputs::Trigger::DSL
 

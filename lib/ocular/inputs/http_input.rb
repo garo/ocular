@@ -18,7 +18,6 @@ class Ocular
 
             module DSL
 
-
                 def onGET(path, opts = {}, &block)                    
                     handler = handlers.get(::Ocular::Inputs::HTTP::Input)
                     handler.add_get(script_name, path, opts, self, &block)
@@ -35,12 +34,34 @@ class Ocular
                 end
             end
 
+            module ErrorDSL
+                class ClientError < ::Exception
+                    def initialize(status, message)
+                        @status = status
+                        @message = message
+                    end
+
+                    def http_status
+                        puts "http_status called: #{@status}"
+                        return @status
+                    end
+
+                    def to_s
+                        puts "to_s called: #{@message}"
+                        return @message
+                    end
+                end
+            end
+
             class Input < ::Ocular::Inputs::Base
 
                 attr_reader :routes
 
+
                 class WebRunContext < ::Ocular::DSL::RunContext
                     attr_accessor :request, :response, :params, :env
+
+                    include ::Ocular::Inputs::HTTP::ErrorDSL
 
                     def initialize()
                         super(Ocular::Logging::ConsoleLogger.new) 
@@ -426,6 +447,7 @@ class Ocular
                     invoke(context) do |context|
                         route!(context)
                     end
+
                 rescue ::Exception => error
                     invoke(context) do |context|
                         handle_exception!(context, error)
@@ -453,6 +475,10 @@ class Ocular
 
                     if error.respond_to? :http_status
                         context.response.status = error.http_status
+
+                        if error.respond_to? :to_s
+                            puts error.to_s
+                        end
                     else
                         context.response.status = 500
                         puts "Internal Server Error: #{error}"
