@@ -15,6 +15,7 @@ class Ocular
             include Ocular::DSL::Fog
             include Ocular::DSL::Etcd
             include Ocular::DSL::Orbit
+            include Ocular::DSL::MySQL
 
             include Ocular::Inputs::Cron::DSL
 

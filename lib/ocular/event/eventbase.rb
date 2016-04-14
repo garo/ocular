@@ -46,8 +46,7 @@ class Ocular
                         r.error = error
                     end
 
-                    response_data = Marshal.dump(r)
-                    writer.puts(response_data)
+                    Marshal.dump(r, writer)
                     writer.close
 
                 end

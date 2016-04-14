@@ -144,7 +144,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             proxy = ef.load_from_block "test_dsl" do
                 onGET "/newroute" do
                     "route called"
-                end                             
+                end
             end
             
             input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
@@ -162,13 +162,37 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             expect(routes["GET"][0][0]).to eq(/\A\/test_dsl\/newroute\z/)
         end
 
+        it "#onGET can be used to define a route which uses return" do
+            ef = Ocular::Event::EventFactory.new
+            proxy = ef.load_from_block "test_dsl" do
+                fork true
+                onGET "/" do
+                    return "{}"
+                end
+            end
+
+            input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
+
+            input.start()
+            port = ::Ocular::Settings.get(:inputs)[:http][:port]
+            response = Faraday.get("http://localhost:#{port}/test_dsl/")
+            expect(response.status).to eq(200)
+            expect(response.body).to eq("{}")
+            input.stop()
+
+            routes = input.routes
+            # The routes object maps on how sinatra does its route setup. Read more at
+            # https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb#L1585
+            expect(routes["GET"][0][0]).to eq(/\A\/test_dsl\/\z/)
+        end
+
         it "#onPOST can be used to define a route" do
             a = nil
             ef = Ocular::Event::EventFactory.new
             proxy = ef.load_from_block "test_dsl" do
                 onPOST "/newroute" do
                     ""
-                end                             
+                end
             end
 
             input = ef.handlers.get(::Ocular::Inputs::HTTP::Input)
@@ -181,11 +205,12 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             proxy = ef.load_from_block "test_dsl" do
                 onPOST "/newroute" do
                     ""
-                end                             
+                end
             end
 
             expect(ef.get("test_dsl").events["POST"]["/test_dsl/newroute"]).not_to eq(nil)
-        end  
+        end
+
     end
 end
 

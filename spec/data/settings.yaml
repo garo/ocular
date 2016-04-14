@@ -7,7 +7,9 @@ aws:
 datasources:
   etcd:
     host: localhost
-    port: 2379
+    port: 4001
+  mysql:
+    host: localhost
 
 inputs:
   http:

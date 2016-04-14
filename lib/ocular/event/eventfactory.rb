@@ -24,6 +24,7 @@ class Ocular
             include Ocular::DSL::SSH
             include Ocular::DSL::Fog
             include Ocular::DSL::Etcd
+            include Ocular::DSL::MySQL
 
             include Ocular::Inputs::HTTP::DSL
             include Ocular::Inputs::Cron::DSL

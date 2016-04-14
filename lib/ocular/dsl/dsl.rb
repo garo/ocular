@@ -17,4 +17,5 @@ require 'ocular/dsl/fog.rb'
 require 'ocular/dsl/logging.rb'
 require 'ocular/dsl/ssh.rb'
 require 'ocular/dsl/orbit.rb'
+require 'ocular/dsl/mysql.rb'
 
