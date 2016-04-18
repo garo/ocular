@@ -39,6 +39,7 @@ class Ocular
                 end
 
                 def stop()
+                    @conn.close
                 end
 
                 class RabbitMQRunContext < ::Ocular::DSL::RunContext
@@ -57,20 +58,21 @@ class Ocular
                         @logger = logger
                     end
 
-                    def subscribe(queue, &block)
+                    def subscribe(queue, *settings, &block)
                         eventbase = Ocular::DSL::EventBase.new(@proxy, &block)
                         ::Ocular.logger.debug "rabbitmq.subscribe to# #{queue} for block #{block}"
 
                         ch = @handler.conn.create_channel
-                        q  = ch.queue(queue)
+                        q  = ch.queue(queue, *settings)
 
-                        q.subscribe do |delivery_info, metadata, payload|
+                        q.subscribe(:manual_ack => true) do |delivery_info, metadata, payload|
                             context = RabbitMQRunContext.new(@logger)
                             context.log_cause("rabbitmq.subscribe(#{queue})", {:delivery_info => delivery_info, :metadata => metadata, :payload => payload})
                             context.delivery_info = delivery_info
                             context.metadata = metadata
                             context.payload = payload
                             eventbase.exec(context)
+                            ch.acknowledge(delivery_info.delivery_tag, false)
                         end
 
                         id = queue + "-" + block.to_s

@@ -12,7 +12,7 @@ class Ocular
                 attr_accessor :error
             end
 
-            attr_accessor :proxy
+            attr_accessor :proxy, :last_run
 
             def initialize(proxy, &block)
                 @callback = block
@@ -30,6 +30,7 @@ class Ocular
                     end
                 ensure
                     context.log_timing("execution_time", start)
+                    @last_run = context
                 end
             end
 
@@ -41,14 +42,12 @@ class Ocular
 
                     begin
                         r.response = __call(context, @callback)
-                        #r.response = context.instance_eval(&@callback)
                     rescue Exception => error
                         r.error = error
                     end
 
                     Marshal.dump(r, writer)
                     writer.close
-
                 end
                 writer.close
 
@@ -56,7 +55,6 @@ class Ocular
                 r = Marshal.load(data)
                 reader.close
                 Process.wait(child_pid)
-
 
                 if r.error
                     raise r.error
@@ -66,7 +64,6 @@ class Ocular
 
             def exec_nofork(context)
                 return __call(context, @callback)
-                #context.instance_eval(&@callback)
             end
 
             def __call(context, callback)
