@@ -34,6 +34,21 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     end
 
+    it "contains built-in /check path" do
+        Ocular::Settings.load_from_file("spec/data/settings.yaml")
+        settings = Ocular::Settings.get(:inputs)
+
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
+        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input.start()
+
+        response = Faraday.get("http://localhost:#{settings[:http][:port]}/check")
+        expect(response.status).to eq(200)
+        expect(response.body).to eq("OK")
+        input.stop()
+
+    end    
+
     it "can be used to define custom routes with arguments" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
         settings = Ocular::Settings.get(:inputs)

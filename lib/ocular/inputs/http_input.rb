@@ -595,6 +595,16 @@ class Ocular
                         @stopsignal.pop
                         server.stop(true)
                     end
+
+                    define_check_route()
+                end
+
+                def define_check_route
+                    pattern, keys = compile("/check")
+
+                    (@routes["GET"] ||= []) << build_signature(pattern, keys) do |context|
+                        [200, "OK"]
+                    end
                 end
 
                 def stop()
