@@ -44,7 +44,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
         response = Faraday.get("http://localhost:#{settings[:http][:port]}/check")
         expect(response.status).to eq(200)
-        expect(response.body).to eq("OK")
+        expect(response.body).to eq("OK\n")
         input.stop()
 
     end    

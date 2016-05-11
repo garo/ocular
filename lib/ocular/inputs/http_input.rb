@@ -603,7 +603,7 @@ class Ocular
                     pattern, keys = compile("/check")
 
                     (@routes["GET"] ||= []) << build_signature(pattern, keys) do |context|
-                        [200, "OK"]
+                        [200, "OK\n"]
                     end
                 end
 
