@@ -32,7 +32,7 @@ RSpec.describe Ocular::Inputs::Cron::Input do
                 fork false
                 cron.in "0.1s" do
                     s = true
-                end                             
+                end
             end
             
             input = ef.handlers.get(::Ocular::Inputs::Cron::Input)
@@ -58,6 +58,31 @@ RSpec.describe Ocular::Inputs::Cron::Input do
             
             input = ef.handlers.get(::Ocular::Inputs::Cron::Input)
             input.stop()
+        end
+
+        it "#cron.every won't fire if cron is disabled" do
+            ef = Ocular::Event::EventFactory.new
+            s = false
+            input = ef.handlers.get(::Ocular::Inputs::Cron::Input)
+            input.disable
+
+            proxy = ef.load_from_block "test_dsl" do
+                fork false
+                cron.every "0.3s" do
+                    s = true
+                end                             
+            end
+
+            sleep 0.5
+            expect(s).to eq(false)
+            input.enable
+            while s == false
+                sleep 0.1
+            end
+            expect(s).to eq(true)
+
+            input.stop()
+
         end
 
     end

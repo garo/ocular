@@ -26,12 +26,28 @@ class Ocular
 
                 attr_reader :routes
                 attr_reader :scheduler
+                attr_reader :cron_enabled
 
                 def initialize(settings_factory)
-                    settings = settings_factory[:http]
+                    settings = settings_factory.fetch(:cron, {})
+                    @cron_enabled = true
+
+                    if settings[:lock]
+                        raise "Cron locking not yet implemented"
+                        @cron_enabled = false
+                    end
 
                     @scheduler = ::Rufus::Scheduler.new
                     ::Ocular.logger.debug "Starting Rufus cron scheduler"
+
+                    if settings[:lock]
+                        @scheduler.every(settings[:lock_delay] || "10s", :overlap => false) do
+                            etcd = ::Ocular::DSL::Etcd.etcd()
+
+                            ret = etcd.get(settings[:lock])
+                            pp ret
+                        end
+                    end
                 end
 
                 def start()
@@ -41,6 +57,15 @@ class Ocular
                 def stop()
                     @scheduler.shutdown
                 end
+
+                def disable()
+                    @cron_enabled = false
+                end
+
+                def enable()
+                    @cron_enabled = true
+                end
+
 
                 class DSLProxy
                     def initialize(proxy, handler, logger)
@@ -54,9 +79,11 @@ class Ocular
                         ::Ocular.logger.debug "Scheduling cron.in(#{rule}) for block #{block}"
 
                         id = @handler.scheduler.in(rule, :overlap => false) do
-                            context = ::Ocular::DSL::RunContext.new(@logger)
-                            context.log_cause("cron.in", {:rule => rule})
-                            eventbase.exec(context)
+                            if @handler.cron_enabled
+                                context = ::Ocular::DSL::RunContext.new(@logger)
+                                context.log_cause("cron.in", {:rule => rule})
+                                eventbase.exec(context)
+                            end
                         end
 
                         @proxy.events[id] = eventbase
@@ -69,9 +96,11 @@ class Ocular
                         ::Ocular.logger.debug "Scheduling cron.at(#{rule}) for block #{block}"
 
                         id = @handler.scheduler.at(rule, :overlap => false) do
-                            context = ::Ocular::DSL::RunContext.new(@logger)
-                            context.log_cause("cron.at", {:rule => rule})
-                            eventbase.exec(context)
+                            if @handler.cron_enabled
+                                context = ::Ocular::DSL::RunContext.new(@logger)
+                                context.log_cause("cron.at", {:rule => rule})
+                                eventbase.exec(context)
+                            end
                         end
 
                         @proxy.events[id] = eventbase
@@ -84,9 +113,11 @@ class Ocular
                         ::Ocular.logger.debug "Scheduling cron.every(#{rule}) for block #{block}"
 
                         id = @handler.scheduler.every(rule, :overlap => false) do
-                            context = ::Ocular::DSL::RunContext.new(@logger)
-                            context.log_cause("cron.every", {:rule => rule})
-                            eventbase.exec(context)
+                            if @handler.cron_enabled
+                                context = ::Ocular::DSL::RunContext.new(@logger)
+                                context.log_cause("cron.every", {:rule => rule})
+                                eventbase.exec(context)
+                            end
                         end
 
                         @proxy.events[id] = eventbase
@@ -99,9 +130,11 @@ class Ocular
                         ::Ocular.logger.debug "Scheduling cron.cron(#{rule}) for block #{block}"
 
                         id = @handler.scheduler.cron(rule, :overlap => false) do
-                            context = ::Ocular::DSL::RunContext.new(@logger)
-                            context.log_cause("cron.cron", {:rule => rule})
-                            eventbase.exec(context)
+                            if @handler.cron_enabled
+                                context = ::Ocular::DSL::RunContext.new(@logger)
+                                context.log_cause("cron.cron", {:rule => rule})
+                                eventbase.exec(context)
+                            end
                         end
 
                         @proxy.events[id] = eventbase
