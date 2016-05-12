@@ -5,11 +5,26 @@ Ocular allows to easily create small scripts which are triggered from multiple d
 
 The goal is that a new script could be written really quickly to automate a previously manual infrastructure maintenance job instead of doing the manual job yet another time. Scripts are written in Ruby with a simple Ocular DSL which allows the script to easily respond to multitude different events.
 
-Planned event sources:
+Currently implemented event sources:
  - HTTP calls
  - RabbitMQ messages
- - SQS/SNS messages
- - Graphite item triggers
- - Zabbix alerts
  - Timers
+
+Planned event sources:
+ - SQS/SNS messages
+ - Zabbix alerts
+ - NATS broadcast messages
+ - salt-stack event bus
  
+Currently implemented clients to external services (ie. what you can easily do once your event has been triggered):
+ - MySQL
+ - etcd
+ - RabbitMQ
+ - AWS/EC2
+ - Kafka (for logging)
+ - SSH for remote execution
+ 
+Planned clients to external services:
+ - Graphite
+ - Zabbix configuration
+ - salt-stack remote state execution
