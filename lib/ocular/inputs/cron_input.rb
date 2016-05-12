@@ -33,7 +33,6 @@ class Ocular
                     @cron_enabled = true
 
                     if settings[:lock]
-                        raise "Cron locking not yet implemented"
                         @cron_enabled = false
                     end
 
@@ -41,11 +40,11 @@ class Ocular
                     ::Ocular.logger.debug "Starting Rufus cron scheduler"
 
                     if settings[:lock]
-                        @scheduler.every(settings[:lock_delay] || "10s", :overlap => false) do
-                            etcd = ::Ocular::DSL::Etcd.etcd()
+                        Ocular.logger.debug "Enabling cron locking at pid #{Process.pid.to_s}"
+                        @scheduler.every(settings[:lock_delay] || "3s", :overlap => false) do
+                            c = Class.new.extend(Ocular::DSL::Etcd)
 
-                            ret = etcd.get(settings[:lock])
-                            pp ret
+                            @cron_enabled = c.ttl_lock("cron_input", ttl:5)
                         end
                     end
                 end
