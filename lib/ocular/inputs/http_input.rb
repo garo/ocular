@@ -488,7 +488,11 @@ class Ocular
                         context.response.status = error.http_status
 
                         if error.respond_to? :to_s
-                            puts error.to_s
+                            str = error.to_s
+                            if !str.end_with?("\n")
+                                str += "\n"
+                            end
+                            context.response.body = str
                         end
                     else
                         context.response.status = 500
