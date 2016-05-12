@@ -21,18 +21,48 @@ RSpec.describe Ocular::DSL::Etcd do
         expect(a).not_to eq(nil)
     end
 
-    it "can do locking" do
-        c = Class.new.extend(Ocular::DSL::Etcd)
-        locked = c.ttl_lock("foo", ttl:5)
+    describe("locking") do
+        it "can lock and unlock" do
+            c = Class.new.extend(Ocular::DSL::Etcd)
+            locked = c.ttl_lock("foo", ttl:5)
 
-        expect(locked).not_to eq(nil)
-        expect(c.locked?("foo")).to eq(true)
+            expect(locked).not_to eq(nil)
+            expect(c.locked?("foo")).to eq(locked)
+            expect(c.unlock("foo")).to eq(true)
+        end
 
-        expect(c.ttl_lock("foo")).to eq(nil)
+        it "can refresh a lock" do
+            c = Class.new.extend(Ocular::DSL::Etcd)
+            locked = c.ttl_lock("foo", ttl:5)
 
-        expect(c.unlock("foo")).to eq(true)
-        expect(c.locked?("foo")).to eq(false)
-    end
+            # refresh the lock
+            expect(c.ttl_lock("foo")).to eq(locked)
+            expect(c.ttl_lock("foo")).to eq(locked)
+
+            expect(c.unlock("foo")).to eq(true)
+        end
+
+        it "can't lock if somebody else has a lock" do
+            c = Class.new.extend(Ocular::DSL::Etcd)
+            c.instance_variable_set(:@run_id, "run_id:c")
+            locked = c.ttl_lock("foo", ttl:5)
+
+            expect(locked).not_to eq(nil)
+            expect(c.locked?("foo")).to eq(locked)
+
+            # Simulate another process
+            d = Class.new.extend(Ocular::DSL::Etcd)
+            d.instance_variable_set(:@run_id, "run_id:d")
+
+            # This process can't lock because process 'c' has already the lock
+            expect(d.ttl_lock("foo")).to eq(nil)
+
+            # c has still the lock
+            expect(c.ttl_lock("foo")).not_to eq(nil)
+
+            expect(c.unlock("foo")).to eq(true)
+        end
+    end  
 
 end
 

@@ -44,14 +44,27 @@ class Ocular
 
                 client = etcd()
 
-                if locked?(key)
-                    return nil
+                current_lock = locked?(key)
+
+                if current_lock != id and current_lock != nil
+                    return nil # Somebody else has lock, can't lock by ourself
                 end
 
-                begin
-                    client.create("/ocular/locks/#{key}", value: id, ttl: ttl)
-                rescue ::Etcd::NodeExist => e
-                    return nil
+                if current_lock == id and current_lock != nil
+                    begin
+                        client.test_and_set("/ocular/locks/#{key}", value: id, prevValue: id, ttl: ttl)
+                        return id
+                    rescue ::Etcd::NodeExist => e
+                        return nil
+                    end
+
+                else
+                    begin
+                        client.create("/ocular/locks/#{key}", value: id, ttl: ttl)
+                        return id
+                    rescue ::Etcd::NodeExist => e
+                        return nil
+                    end
                 end
             end
 
@@ -68,10 +81,13 @@ class Ocular
             def locked?(key)
                 client = etcd()
                 begin
-                    client.get("/ocular/locks/#{key}")
-                    return true # Key was found, so somebody else has the lock
+                    ret = client.get("/ocular/locks/#{key}")
+                    if ret.node and ret.node.expiration == nil
+                        warn("Key #{key} has been locked permanently with value '#{ret.node.value}'!")
+                    end
+                    return ret.node.value # Key is locked
                 rescue ::Etcd::KeyNotFound => e
-                    return false
+                    return nil
                 end
             end
 
