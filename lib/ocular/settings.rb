@@ -28,7 +28,7 @@ class Ocular
         end
 
         def self.load_from_file(filename)
-            #puts "Loaded settings from #{filename}"
+            ::Ocular.logger.debug "Loaded settings from #{filename}"
             @settings = ::Ocular::deep_symbolize(YAML::load_file(filename))
         end
 
