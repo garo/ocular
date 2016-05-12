@@ -21,7 +21,7 @@ Currently implemented clients to external services (ie. what you can easily do o
  - etcd
  - RabbitMQ
  - AWS/EC2
- - Kafka (for loggign)
+ - Kafka (for logging)
  - SSH for remote execution
  
 Planned clients to external services:
