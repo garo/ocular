@@ -14,6 +14,7 @@ Planned event sources:
  - SQS/SNS messages
  - Zabbix alerts
  - NATS broadcast messages
+ - salt-stack event bus
  
 Currently implemented clients to external services (ie. what you can easily do once your event has been triggered):
  - MySQL
@@ -26,3 +27,4 @@ Currently implemented clients to external services (ie. what you can easily do o
 Planned clients to external services:
  - Graphite
  - Zabbix configuration
+ - salt-stack remote state execution
