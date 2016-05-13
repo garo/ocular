@@ -445,7 +445,9 @@ class Ocular
                     context.params = indifferent_params(context.request.params)
 
                     context.response['Content-Type'] = nil
-                    invoke(context) { |context| dispatch(context) }
+                    invoke(context) do |context|
+                        dispatch(context)
+                    end
 
                     unless context.response['Content-Type']
                         context.response['Content-Type'] = "text/html"
@@ -469,7 +471,6 @@ class Ocular
 
                 def invoke(context)
                     res = catch(:halt) { yield(context) }
-
                     if Array === res and Fixnum === res.first
                         res = res.dup
                         status(context, res.shift)
