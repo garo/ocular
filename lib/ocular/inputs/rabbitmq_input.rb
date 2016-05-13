@@ -71,8 +71,13 @@ class Ocular
                             context.delivery_info = delivery_info
                             context.metadata = metadata
                             context.payload = payload
-                            eventbase.exec(context)
-                            ch.acknowledge(delivery_info.delivery_tag, false)
+                            begin
+                                eventbase.exec(context)
+                                ch.acknowledge(delivery_info.delivery_tag, false)
+                            rescue
+                                sleep 1
+                                ch.reject(delivery_info.delivery_tag, true)
+                            end
                         end
 
                         id = queue + "-" + block.to_s
