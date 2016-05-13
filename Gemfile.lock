@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ocular (0.1.15)
+    ocular (0.1.16)
       bunny (= 2.3.1)
       etcd (= 0.3.0)
       faraday (= 0.9.2)

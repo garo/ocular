@@ -74,8 +74,9 @@ class Ocular
                             begin
                                 eventbase.exec(context)
                                 ch.acknowledge(delivery_info.delivery_tag, false)
-                            rescue
+                            rescue 
                                 sleep 1
+                                warn "Error on RabbitMQ event processing on context #{context}"
                                 ch.reject(delivery_info.delivery_tag, true)
                             end
                         end
