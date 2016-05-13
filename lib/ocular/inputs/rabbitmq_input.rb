@@ -26,11 +26,11 @@ class Ocular
                 attr_reader :settings
 
                 def initialize(settings_factory)
-                    @settings = settings_factory[:rabbitmq]
+                    @settings = (settings_factory[:rabbitmq] || {})
 
                     ::Ocular.logger.debug "Starting RabbitMQ input"
 
-                    @conn = Bunny.new
+                    @conn = Bunny.new(@settings[:url] || nil)
                     @conn.start
                 end
 
