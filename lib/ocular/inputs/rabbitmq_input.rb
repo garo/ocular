@@ -28,9 +28,10 @@ class Ocular
                 def initialize(settings_factory)
                     @settings = (settings_factory[:rabbitmq] || {})
 
-                    ::Ocular.logger.debug "Starting RabbitMQ input"
+                    url = @settings[:url] || nil
+                    ::Ocular.logger.debug "Starting RabbitMQ input with connection string #{url}"
 
-                    @conn = Bunny.new(@settings[:url] || nil)
+                    @conn = Bunny.new(url)
                     @conn.start
                 end
 
