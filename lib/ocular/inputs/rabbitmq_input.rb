@@ -26,7 +26,7 @@ class Ocular
                 attr_reader :settings
 
                 def initialize(settings_factory)
-                    @settings = (settings_factory[:rabbitmq] || {})
+                    @settings = settings_factory.get(:datasources).fetch(:rabbitmq, {})
 
                     url = @settings[:url] || nil
                     ::Ocular.logger.debug "Starting RabbitMQ input with connection string #{url}"

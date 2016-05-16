@@ -6,28 +6,28 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "can start its server" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        port = Ocular::Settings.get(:inputs)[:http][:port]
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.start()
 
-        response = Faraday.get("http://localhost:#{settings[:http][:port]}/does_not_exists")
+        response = Faraday.get("http://localhost:#{port}/does_not_exists")
         expect(response.status).to eq(404)
         input.stop()
     end
  
     it "can be used to define custom routes" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
         proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_get('', '/custompath', {}, proxy) do
             "customresponse"
         end
         input.start()
 
-        response = Faraday.get("http://localhost:#{settings[:http][:port]}/custompath")
+        port = Ocular::Settings.get(:inputs)[:http][:port]
+        response = Faraday.get("http://localhost:#{port}/custompath")
         expect(response.status).to eq(200)
         expect(response.body).to eq("customresponse")
         input.stop()
@@ -36,13 +36,13 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "contains built-in /check path" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
         proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.start()
 
-        response = Faraday.get("http://localhost:#{settings[:http][:port]}/check")
+        port = Ocular::Settings.get(:inputs)[:http][:port]
+        response = Faraday.get("http://localhost:#{port}/check")
         expect(response.status).to eq(200)
         expect(response.body).to eq("OK\n")
         input.stop()
@@ -51,16 +51,16 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "can be used to define custom routes with arguments" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
         proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_get('', '/custompath/:foo1/:foo2', {}, proxy) do
             "#{params["foo1"]} is #{params["foo2"]}"
         end
         input.start()
 
-        response = Faraday.get("http://localhost:#{settings[:http][:port]}/custompath/1/derp")
+        port = Ocular::Settings.get(:inputs)[:http][:port]
+        response = Faraday.get("http://localhost:#{port}/custompath/1/derp")
         expect(response.status).to eq(200)
         expect(response.body).to eq("1 is derp")
         input.stop()
@@ -69,16 +69,16 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "can be used to POST data" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
         proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_post('', '/custompath', {}, proxy) do
             "foo is #{params["foo"]}"
         end
         input.start()
 
-        response = Faraday.post("http://localhost:#{settings[:http][:port]}/custompath",
+        port = Ocular::Settings.get(:inputs)[:http][:port]
+        response = Faraday.post("http://localhost:#{port}/custompath",
             {"foo" => "bar"})
 
         expect(response.status).to eq(200)
@@ -89,18 +89,18 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "can be used to DELETE data" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
         deleted = nil
         proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_delete('', '/custompath/:id', {}, proxy) do
             deleted = params["id"].to_i
             "deleted #{deleted}"
         end
         input.start()
 
-        response = Faraday.delete("http://localhost:#{settings[:http][:port]}/custompath/20")
+        port = Ocular::Settings.get(:inputs)[:http][:port]
+        response = Faraday.delete("http://localhost:#{port}/custompath/20")
         expect(response.status).to eq(200)
         expect(response.body).to eq("deleted 20")
         input.stop()
@@ -108,18 +108,18 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "can use content_type to set it" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
         deleted = nil
         proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_get('', '/custompath', {}, proxy) do
             content_type 'text/plain'
             "Hello"
         end
         input.start()
 
-        response = Faraday.get("http://localhost:#{settings[:http][:port]}/custompath")
+        port = Ocular::Settings.get(:inputs)[:http][:port]
+        response = Faraday.get("http://localhost:#{port}/custompath")
         expect(response.status).to eq(200)
         expect(response.body).to eq("Hello")
         expect(response.env.response_headers["content-type"]).to eq("text/plain")
@@ -128,11 +128,10 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
 
     it "can be used to return custom status codes" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
         deleted = nil
         proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
-        input = ::Ocular::Inputs::HTTP::Input.new(settings)
+        input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_delete('', '/custompath/:id', {}, proxy) do
             if params["id"].to_i == 200
                 [200, "Everything is fine"]
@@ -141,12 +140,14 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
             end
         end
         input.start()
+        port = Ocular::Settings.get(:inputs)[:http][:port]
 
-        response = Faraday.delete("http://localhost:#{settings[:http][:port]}/custompath/200")
+
+        response = Faraday.delete("http://localhost:#{port}/custompath/200")
         expect(response.status).to eq(200)
         expect(response.body).to eq("Everything is fine")
 
-        response = Faraday.delete("http://localhost:#{settings[:http][:port]}/custompath/409")
+        response = Faraday.delete("http://localhost:#{port}/custompath/409")
         expect(response.status).to eq(409)
         expect(response.body).to eq("")
 

@@ -572,7 +572,7 @@ class Ocular
                 end
 
                 def initialize(settings_factory)
-                    settings = settings_factory[:http]
+                    settings = settings_factory.get(:inputs)[:http]
 
                     @routes = {}
                     @settings = DEFAULT_SETTINGS.merge(settings)

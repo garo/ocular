@@ -6,9 +6,8 @@ RSpec.describe Ocular::Inputs::Cron::Input do
 
     it "can start its server and schedule one event" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
-        settings = Ocular::Settings.get(:inputs)
 
-        input = ::Ocular::Inputs::Cron::Input.new(settings)
+        input = ::Ocular::Inputs::Cron::Input.new(Ocular::Settings)
         input.start()
 
         s = false

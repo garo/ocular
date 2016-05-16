@@ -29,10 +29,9 @@ class Ocular
                 attr_reader :cron_enabled
 
                 def initialize(settings_factory)
-                    settings = settings_factory.fetch(:cron, {})
+                    settings = settings_factory.get(:inputs).fetch(:cron, {})
                     @cron_enabled = true
 
-                    pp settings
                     if settings[:lock]
                         @cron_enabled = false
                     end

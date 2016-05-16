@@ -13,7 +13,7 @@ class Ocular
                     return @handlers[klass]
                 end
 
-                @handlers[klass] = klass.new(::Ocular::Settings.get(:inputs))
+                @handlers[klass] = klass.new(::Ocular::Settings)
                 return @handlers[klass]
             end
 
