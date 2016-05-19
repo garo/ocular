@@ -14,13 +14,18 @@ class Ocular
                 if kafka != nil
                     @kafka = kafka
                 else
+                    pp settings
                     @kafka = Kafka.new(settings[:client])
                 end
                 @settings = settings
 
                 @producer = @kafka.producer
-            end            
+            end
 
+            def reconnect()
+                @kafka = Kafka.new(@settings[:client])
+            end
+            
             def debug(message = nil, &block)
                 add(Severity::DEBUG, message, @run_id, &block)
             end
@@ -56,23 +61,41 @@ class Ocular
                     end
                 end
 
-                @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
-                @producer.deliver_messages
+                begin
+                    @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
+                    @producer.deliver_messages
+                rescue RuntimeError => e
+                    STDERR.puts "Error on producing kafka message: #{e}"
+                end
             end
 
             def log_event(property, value, run_id = nil)
-                @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                @producer.deliver_messages
+                begin
+                    @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                    @producer.deliver_messages
+                rescue RuntimeError => e
+                    STDERR.puts "Error on producing kafka log_event: #{e}"
+                end
             end
 
             def log_cause(type, environment, run_id = nil)
-                @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                @producer.deliver_messages
+                begin
+                    @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                    @producer.deliver_messages
+                rescue RuntimeError => e
+                    STDERR.puts "Error on producing kafka log_cause: #{e}"
+                end
+
             end
 
             def log_timing(key, value, run_id = nil)
-                @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                @producer.deliver_messages
+                begin
+                    @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                    @producer.deliver_messages
+                rescue RuntimeError => e
+                    STDERR.puts "Error on producing kafka log_timing: #{e}"
+                end
+
             end
 
             # Default formatter for log messages.

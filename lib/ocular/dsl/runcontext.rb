@@ -9,6 +9,7 @@ class Ocular
             attr_accessor :proxy
             attr_accessor :class_name
             attr_accessor :event_signature
+            attr_accessor :logger
 
             include Ocular::DSL::Logging
             include Ocular::DSL::SSH
@@ -42,6 +43,10 @@ class Ocular
                 for i in @cleanups
                     i.call()
                 end
+            end
+
+            def after_fork()
+                @logger.reconnect()
             end
         end
 

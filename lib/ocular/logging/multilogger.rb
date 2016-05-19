@@ -35,6 +35,12 @@ class Ocular
                 add(Severity::FATAL, message, @run_id, &block)
             end
 
+            def reconnect()
+                @loggers.each do |logger|
+                    logger.reconnect()
+                end
+            end
+
             def add(severity, message = nil, run_id = nil, &block)
 
                 if message.nil?

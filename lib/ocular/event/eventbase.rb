@@ -40,6 +40,8 @@ class Ocular
                     reader.close
                     r = Results.new
 
+                    context.after_fork()
+
                     begin
                         r.response = __call(context, @callback)
                     rescue Exception => error
@@ -65,6 +67,7 @@ class Ocular
                 if r.error
                     raise r.error
                 end
+                puts "done"
                 return r.response
             end
 

@@ -39,7 +39,10 @@ class Ocular
 
             def fatal(message = nil, &block)
                 add(Severity::FATAL, message, @run_id, &block)
-            end        
+            end
+
+            def reconnect()
+            end
 
             def add(severity, message = nil, run_id = nil, &block)
                 severity ||= Severity::UNKNOWN

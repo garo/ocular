@@ -25,5 +25,33 @@ RSpec.describe Ocular::DSL::RunContext do
         expect(a).to eq(true)
     end
 
+    it "can log inside fork" do
+        logger = Ocular::Logging::MultiLogger.new
+        console_logger = Ocular::Logging::ConsoleLogger.new
+        console_logger.set_level("DEBUG")
+        kafka_logger = Ocular::Logging::KafkaLogger.new({
+            :client => {
+                :seed_brokers => [
+                    "kafka-a-1.us-east-1.applifier.info:9092"
+                ]
+            }
+            }, nil)
+        logger.add_logger(console_logger)
+        logger.add_logger(kafka_logger)
+        logger.log("Warming logging up")
+        context = Ocular::DSL::RunContext.new(logger)
+        proxy = Ocular::Event::DefinitionProxy.new("test script", {:handlers => true})
+        context.log_cause("test:can log inside fork", {:foo => "bar"})
+        eventbase = Ocular::DSL::EventBase.new(proxy) do
+            log "******** Logging inside fork"
+            puts "Logging inside fork!!!"
+        end
+
+        eventbase.exec(context)
+
+
+
+    end
+
 end
 
