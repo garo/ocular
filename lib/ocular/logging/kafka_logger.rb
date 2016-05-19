@@ -66,6 +66,7 @@ class Ocular
                     @producer.deliver_messages
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka message: #{e}"
+                    STDERR.puts "Message was #{message}, stacktrace: #{e.backtrace.join("\n")}"
                 end
             end
 
@@ -75,6 +76,7 @@ class Ocular
                     @producer.deliver_messages
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_event: #{e}"
+                    STDERR.puts "#{property} => #{value}, stacktrace: #{e.backtrace.join("\n")}"                    
                 end
             end
 
@@ -84,6 +86,7 @@ class Ocular
                     @producer.deliver_messages
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_cause: #{e}"
+                    STDERR.puts "type: #{type}, stacktrace: #{e.backtrace.join("\n")}"                    
                 end
 
             end
@@ -94,6 +97,8 @@ class Ocular
                     @producer.deliver_messages
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_timing: #{e}"
+                    STDERR.puts "Timing: #{key} => #{value}, stacktrace: #{e.backtrace.join("\n")}"
+
                 end
 
             end
