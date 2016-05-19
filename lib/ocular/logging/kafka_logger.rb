@@ -25,7 +25,7 @@ class Ocular
             def reconnect()
                 @kafka = Kafka.new(@settings[:client])
             end
-            
+
             def debug(message = nil, &block)
                 add(Severity::DEBUG, message, @run_id, &block)
             end
@@ -64,7 +64,7 @@ class Ocular
                 begin
                     @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
                     @producer.deliver_messages
-                rescue RuntimeError => e
+                rescue StandardError => e
                     STDERR.puts "Error on producing kafka message: #{e}"
                 end
             end
@@ -73,7 +73,7 @@ class Ocular
                 begin
                     @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
                     @producer.deliver_messages
-                rescue RuntimeError => e
+                rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_event: #{e}"
                 end
             end
@@ -82,7 +82,7 @@ class Ocular
                 begin
                     @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
                     @producer.deliver_messages
-                rescue RuntimeError => e
+                rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_cause: #{e}"
                 end
 
@@ -92,7 +92,7 @@ class Ocular
                 begin
                     @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
                     @producer.deliver_messages
-                rescue RuntimeError => e
+                rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_timing: #{e}"
                 end
 

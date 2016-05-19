@@ -43,7 +43,6 @@ RSpec.describe Ocular::DSL::RunContext do
         proxy = Ocular::Event::DefinitionProxy.new("test script", {:handlers => true})
         context.log_cause("test:can log inside fork", {:foo => "bar"})
         eventbase = Ocular::DSL::EventBase.new(proxy) do
-            log "******** Logging inside fork"
             puts "Logging inside fork!!!"
         end
 
