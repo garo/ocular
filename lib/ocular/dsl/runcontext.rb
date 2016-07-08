@@ -18,6 +18,8 @@ class Ocular
             include Ocular::DSL::Orbit
             include Ocular::DSL::MySQL
             include Ocular::DSL::RabbitMQ
+            include Ocular::DSL::Graphite
+            include Ocular::DSL::Cache
 
             include Ocular::Inputs::Cron::DSL
 

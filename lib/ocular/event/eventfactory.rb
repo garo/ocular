@@ -27,6 +27,8 @@ class Ocular
             include Ocular::DSL::Etcd
             include Ocular::DSL::MySQL
             include Ocular::DSL::RabbitMQ
+            include Ocular::DSL::Graphite
+            include Ocular::DSL::Cache
 
             include Ocular::Inputs::HTTP::DSL
             include Ocular::Inputs::HTTP::ErrorDSL
