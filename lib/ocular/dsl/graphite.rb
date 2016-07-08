@@ -41,7 +41,11 @@ class Ocular
                     raise "Invalid response from graphite for query #{query}. Response code: #{response.code}, response body: #{response.body}"
                 end
 
-                return JSON.parse(response.body)
+                begin
+                    return JSON.parse(response.body)
+                rescue
+                    return nil
+                end
             end
 
             def graphite_get_latests(target, options = {})
@@ -52,7 +56,9 @@ class Ocular
                     # sort in descending order
                     # pick latests datapoint
                     # from that pick the value
-                    values[reply["target"]] = reply["datapoints"].select {|x| x[0] }.sort {|a,b| b[1] <=> a[1]}.first[0]
+                    if reply and reply["datapoints"] and reply["datapoints"].length > 0
+                        values[reply["target"]] = reply["datapoints"].select {|x| x and x[0] }.sort {|a,b| b[1] <=> a[1]}.first[0]
+                    end
                 end
 
                 return values
