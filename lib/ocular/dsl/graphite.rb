@@ -52,12 +52,17 @@ class Ocular
                 values = {}
                 response = graphite(target, options)
                 response.each do |reply|
-                    # Discard null replies
-                    # sort in descending order
-                    # pick latests datapoint
-                    # from that pick the value
                     if reply and reply["datapoints"] and reply["datapoints"].length > 0
-                        values[reply["target"]] = reply["datapoints"].select {|x| x and x[0] }.sort {|a,b| b[1] <=> a[1]}.first[0]
+                        # Discard null replies
+                        not_null = reply["datapoints"].select {|x| x and x[0] }
+
+                        # sort in descending order
+                        not_null.sort! {|a,b| b[1] <=> a[1]}
+                        if not_null.length > 0
+                            # pick latests datapoint
+                            # from that pick the value                            
+                            values[reply["target"]] = not_null.first[0]
+                        end
                     end
                 end
 
