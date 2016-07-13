@@ -19,7 +19,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
     it "can be used to define custom routes" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
 
-        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", "./", ::Ocular::Inputs::Handlers.new)
         input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_get('', '/custompath', {}, proxy) do
             "customresponse"
@@ -37,7 +37,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
     it "contains built-in /check path" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
 
-        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", "./", ::Ocular::Inputs::Handlers.new)
         input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.start()
 
@@ -52,7 +52,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
     it "can be used to define custom routes with arguments" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
 
-        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", "./", ::Ocular::Inputs::Handlers.new)
         input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_get('', '/custompath/:foo1/:foo2', {}, proxy) do
             "#{params["foo1"]} is #{params["foo2"]}"
@@ -70,7 +70,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
     it "can be used to POST data" do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
 
-        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", "./", ::Ocular::Inputs::Handlers.new)
         input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_post('', '/custompath', {}, proxy) do
             "foo is #{params["foo"]}"
@@ -91,7 +91,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
 
         deleted = nil
-        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", "./", ::Ocular::Inputs::Handlers.new)        
         input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_delete('', '/custompath/:id', {}, proxy) do
             deleted = params["id"].to_i
@@ -110,7 +110,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
 
         deleted = nil
-        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", "./", ::Ocular::Inputs::Handlers.new)        
         input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_get('', '/custompath', {}, proxy) do
             content_type 'text/plain'
@@ -130,7 +130,7 @@ RSpec.describe Ocular::Inputs::HTTP::Input do
         Ocular::Settings.load_from_file("spec/data/settings.yaml")
 
         deleted = nil
-        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", ::Ocular::Inputs::Handlers.new)        
+        proxy = ::Ocular::Event::DefinitionProxy.new("script_name", "./", ::Ocular::Inputs::Handlers.new)        
         input = ::Ocular::Inputs::HTTP::Input.new(Ocular::Settings)
         input.add_delete('', '/custompath/:id', {}, proxy) do
             if params["id"].to_i == 200

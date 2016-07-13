@@ -67,7 +67,7 @@ class Ocular
                 end
 
                 return values
-            end
+            end   
 
         end
 

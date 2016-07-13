@@ -1,3 +1,5 @@
+require 'pathname'
+
 require 'ocular/inputs/handlers.rb'
 require 'ocular/event/eventbase.rb'
 require 'ocular/inputs/http_input.rb'
@@ -9,11 +11,12 @@ class Ocular
     module Event
         class DefinitionProxy
             attr_accessor :events
-            attr_reader :script_name, :do_fork, :logger
+            attr_reader :script_name, :do_fork, :logger, :dirname
             attr_accessor :handlers, :events
 
-            def initialize(script_name, handlers)
+            def initialize(script_name, dirname, handlers)
                 @script_name = script_name
+                @dirname = dirname
                 @events = {}
                 @logger = ::Ocular.logger
                 @handlers = handlers
@@ -29,6 +32,7 @@ class Ocular
             include Ocular::DSL::RabbitMQ
             include Ocular::DSL::Graphite
             include Ocular::DSL::Cache
+            include Ocular::DSL::File
 
             include Ocular::Inputs::HTTP::DSL
             include Ocular::Inputs::HTTP::ErrorDSL
@@ -61,14 +65,16 @@ class Ocular
                     name = file
                 end
 
-                proxy = DefinitionProxy.new(name, @handlers)
+                pn = Pathname.new(file)
+
+                proxy = DefinitionProxy.new(name, pn.dirname, @handlers)
                 proxy.from_file(file)
                 @files[name] = proxy
                 return proxy
             end
 
             def load_from_block(name, &block)
-                proxy = DefinitionProxy.new(name, @handlers)
+                proxy = DefinitionProxy.new(name, "./", @handlers)
                 proxy.instance_eval(&block)
                 @files[name] = proxy
                 return proxy
