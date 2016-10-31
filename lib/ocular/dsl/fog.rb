@@ -44,6 +44,20 @@ class Ocular
                 return instances
             end
 
+            add_help "get_servers_in_autoscaling_group(group_name)", "Returns instances in an autoscaling group by exact name"
+            def get_servers_in_autoscaling_group(group_name)
+                instances = []
+                for group in autoscaling.groups
+                    if group.id == group_name
+                        for i in group.instances
+                            instances << aws.servers.get(i.id)
+                        end
+                    end
+                end
+
+                return instances
+            end
+
             add_help "find_server_by_ip", "Returns Fog::Compute::AWS::Server or nil"
             def find_server_by_ip(ip)
                 ret = aws().servers.all("private-ip-address" => ip)
