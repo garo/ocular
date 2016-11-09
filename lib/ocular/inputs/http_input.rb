@@ -518,7 +518,7 @@ class Ocular
                         end
                     end
 
-                    puts "Route missing"
+                    puts "Route missing: #{context.request.request_method} #{context.request.path_info}"
                     raise NotFound
                 end
 
