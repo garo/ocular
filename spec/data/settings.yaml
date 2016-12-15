@@ -13,6 +13,9 @@ datasources:
     username: ocular
   rabbitmq:
     url:
+  mongo:
+    default: mongodb://localhost
+
 
 
 inputs:

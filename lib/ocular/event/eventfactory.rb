@@ -29,6 +29,7 @@ class Ocular
             include Ocular::DSL::Fog
             include Ocular::DSL::Etcd
             include Ocular::DSL::MySQL
+            include Ocular::DSL::Mongo
             include Ocular::DSL::RabbitMQ
             include Ocular::DSL::Graphite
             include Ocular::DSL::Cache
