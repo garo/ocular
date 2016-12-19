@@ -68,6 +68,7 @@ class Ocular
 
                         q.subscribe(:manual_ack => true) do |delivery_info, metadata, payload|
                             context = RabbitMQRunContext.new(@logger)
+                            context.after_fork()
                             context.log_cause("rabbitmq.subscribe(#{queue})", {:delivery_info => delivery_info, :metadata => metadata, :payload => payload})
                             context.delivery_info = delivery_info
                             context.metadata = metadata
@@ -75,9 +76,9 @@ class Ocular
                             begin
                                 eventbase.exec(context)
                                 ch.acknowledge(delivery_info.delivery_tag, false)
-                            rescue 
+                            rescue StandardError => e
                                 sleep 1
-                                warn "Error on RabbitMQ event processing on context #{context}"
+                                warn "Error on RabbitMQ event processing on context #{context}. Error: #{e}"
                                 ch.reject(delivery_info.delivery_tag, true)
                             end
                         end

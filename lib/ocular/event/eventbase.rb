@@ -29,6 +29,7 @@ class Ocular
                         return exec_nofork(context)
                     end
                 ensure
+                    ::Ocular.logger.debug "exec for context #{context} took #{start}"
                     context.log_timing("execution_time", start)
                     @last_run = context
                 end
