@@ -1,5 +1,7 @@
 require "kafka"
 require "socket"
+require "logger"
+require "thread"
 
 class Ocular
     module Logging
@@ -14,16 +16,22 @@ class Ocular
                 if kafka != nil
                     @kafka = kafka
                 else
-                    pp settings
+                    #logger = Logger.new(STDOUT)
+                    #logger.level = Logger::DEBUG
+                    #settings[:client][:logger] = logger
                     @kafka = Kafka.new(settings[:client])
                 end
                 @settings = settings
 
                 @producer = @kafka.producer
+
+                @semaphore = Mutex.new
             end
 
             def reconnect()
                 @kafka = Kafka.new(@settings[:client])
+                @producer = @kafka.producer
+                @semaphore = Mutex.new
             end
 
             def debug(message = nil, &block)
@@ -47,6 +55,10 @@ class Ocular
                 add(Severity::FATAL, message, @run_id, &block)
             end
 
+            def deliver_messages
+                @producer.deliver_messages
+            end
+
             def add(severity, message = nil, run_id = nil, &block)
                 severity ||= Severity::UNKNOWN
                 if severity < @level
@@ -62,8 +74,10 @@ class Ocular
                 end
 
                 begin
-                    @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
-                    @producer.deliver_messages
+                    @semaphore.synchronize do
+                        @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
+                        deliver_messages()
+                    end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka message: #{e}"
                     STDERR.puts "Message was #{message}, stacktrace: #{e.backtrace.join("\n")}"
@@ -72,8 +86,10 @@ class Ocular
 
             def log_event(property, value, run_id = nil)
                 begin
-                    @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                    @producer.deliver_messages
+                    @semaphore.synchronize do
+                        @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                        deliver_messages()
+                    end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_event: #{e}"
                     STDERR.puts "#{property} => #{value}, stacktrace: #{e.backtrace.join("\n")}"                    
@@ -82,8 +98,10 @@ class Ocular
 
             def log_cause(type, environment, run_id = nil)
                 begin
-                    @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                    @producer.deliver_messages
+                    @semaphore.synchronize do
+                        @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                        deliver_messages()
+                    end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_cause: #{e}"
                     STDERR.puts "type: #{type}, stacktrace: #{e.backtrace.join("\n")}"                    
@@ -93,8 +111,10 @@ class Ocular
 
             def log_timing(key, value, run_id = nil)
                 begin
-                    @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                    @producer.deliver_messages
+                    @semaphore.synchronize do
+                        @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
+                        deliver_messages()
+                    end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_timing: #{e}"
                     STDERR.puts "Timing: #{key} => #{value}, stacktrace: #{e.backtrace.join("\n")}"

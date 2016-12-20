@@ -590,7 +590,7 @@ class Ocular
 
                     @thread = Thread.new do
                         events_hander = @settings[:silent] ? ::Puma::Events.strings : ::Puma::Events.stdio
-                        server   = ::Puma::Server.new(self, events_hander)
+                        server = ::Puma::Server.new(self, events_hander)
 
                         server.add_tcp_listener @settings[:host], @settings[:port]
                         server.min_threads = 0

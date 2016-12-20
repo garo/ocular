@@ -4,7 +4,7 @@ require 'ocular'
 require 'optparse'
 require 'ostruct'
 require 'pp'
-
+require 'logger'
 
 class OptparseExample
 
