@@ -24,7 +24,6 @@ class Ocular
                 @settings = settings
 
                 @producer = @kafka.producer
-
                 @semaphore = Mutex.new
             end
 
@@ -75,8 +74,7 @@ class Ocular
 
                 begin
                     @semaphore.synchronize do
-                        @producer.produce(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
-                        deliver_messages()
+                        @kafka.deliver_message(@formatter.format_message(severity, Time.now, run_id, message), topic: @settings[:topic], partition_key: run_id)
                     end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka message: #{e}"
@@ -87,8 +85,7 @@ class Ocular
             def log_event(property, value, run_id = nil)
                 begin
                     @semaphore.synchronize do
-                        @producer.produce(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                        deliver_messages()
+                        @kafka.deliver_message(@formatter.format_event(property, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
                     end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_event: #{e}"
@@ -99,8 +96,7 @@ class Ocular
             def log_cause(type, environment, run_id = nil)
                 begin
                     @semaphore.synchronize do
-                        @producer.produce(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                        deliver_messages()
+                        @kafka.deliver_message(@formatter.format_cause(type, environment, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
                     end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_cause: #{e}"
@@ -112,8 +108,7 @@ class Ocular
             def log_timing(key, value, run_id = nil)
                 begin
                     @semaphore.synchronize do
-                        @producer.produce(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
-                        deliver_messages()
+                        @kafka.deliver_message(@formatter.format_event("timing:" + key, value, Time.now, run_id), topic: @settings[:topic], partition_key: run_id)
                     end
                 rescue StandardError => e
                     STDERR.puts "Error on producing kafka log_timing: #{e}"
