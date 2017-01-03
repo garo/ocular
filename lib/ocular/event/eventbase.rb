@@ -55,6 +55,7 @@ class Ocular
                         ::Ocular.logger.error "TypeError when trying to marshal event handler return value. Reason: #{e}"
                         ::Ocular.logger.error "This is usually because you forgot that the last function return value is returned from the handler function. The current type of the returned value is #{r.response.class}. Please make sure your handler returns a proper value which doesn't reference any sockets or otherwise complex unserializable objects."
                         ::Ocular.logger.error "The value of the returned value is :#{r.response.pretty_inspect}"
+                        ::Ocular.logger.error "R value was :#{r.pretty_inspect}"
                     end
                     writer.close
                 end
