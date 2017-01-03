@@ -36,5 +36,6 @@ The goal is that a new script could be written really quickly to automate a prev
   s.add_runtime_dependency('mysql2', '0.4.3')
   s.add_runtime_dependency('bunny', '2.3.1')
   s.add_runtime_dependency('mongo', '2.3.0')
+  s.add_runtime_dependency('pg', '0.19.0')
   s.add_development_dependency('rspec', '3.4.0')
 end
